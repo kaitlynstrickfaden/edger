@@ -213,7 +213,6 @@ We'll load in a second image:
 <br>
 
 ```{r load image 2}
-l_im2 <- system.file("images", "image02.jpg", package = "contourr")
 im2 <- load.image("../images/image02.jpg")
 plot(im2, axes = F)
 ```
