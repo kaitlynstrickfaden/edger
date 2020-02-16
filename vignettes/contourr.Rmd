@@ -9,6 +9,8 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  fig.width = 8,
+  fig.height = 6,
   collapse = TRUE,
   comment = "#>"
 )
@@ -62,11 +64,11 @@ plot(im1)
 
 <br>
 
-A color image is the combined result of three layers of pixels, one layer each for red, green, and blue shades, which are plotted below for reference. R "plots" an image by assigning a combination of red, green, and blue values to each pixel coordinate, with indexing starting in the upper left-hand corner. This image is 384 pixels wide and 256 pixels high.
+A color image is the combined result of three layers of pixels, one layer each for red, green, and blue shades, which are plotted below for reference. R "plots" an image by assigning a combination of red, green, and blue values to each pixel coordinate, with indexing starting in the upper left-hand corner. This image is 768 pixels wide and 512 pixels high.
 
 <br>
 
-```{r}
+```{r rgb image}
 red <- im1
 red[,,,c(2:3)] <- c(0,0)
 
@@ -97,7 +99,7 @@ Now we have a black and white version of our image. This is the image from which
 
 <br>
 
-What is a contour, you may be asking? A contour is just an edge in an image; the "imgradient" function in imager compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
+A contour is just an edge in an image; the "imgradient" function in imager compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
 
 <br>
 
@@ -114,8 +116,9 @@ Next, we'll find the Euclydian distance between the values in the x contour plot
 <br>
 
 ```{r contour image}
-im1gr <- plot(enorm(imgradient(grayscale(im1),"xy")), axes = F)
-imcont <- as.data.frame(enorm(imgradient(grayscale(im1),"xy")))
+im1gr <- enorm(imgradient(grayscale(im1),"xy"))
+im1cont <- as.data.frame(im1gr)
+plot(im1gr)
 ```
 <br>
 
@@ -140,10 +143,10 @@ The package will allow you to draw your own region using the "grabRect" function
 <br>
 
 ```{r rectangle grab}
-imc <- c(189,33,202,243)
+#imc <- grabRect(im1, output = "coord") # draw a box around the object of interest
+imc <- c(375,65,402,458)
 plot(im1, axes = F)
 rect(imc[1], imc[2], imc[3], imc[4], border = "red")
-#imc <- grabRect(im1, output = "coord") # draw a box around the object of interest
 ```
 
 <br>
@@ -167,7 +170,7 @@ masky <- NULL
 
 <br>
 
-This next code chunk will find the coordinates of the contours in the contour image and recolor them in the original image. I went with red, but you can pick any color you like by entering new RGB values on a scale from 0-1 (red, for instance, is [1,0,0]). You must specify some contour value as the minimum threshold to keep. By trial and error, I found that 0.1 was a good threshold for this image.
+This next code chunk will find the coordinates of the contours in the contour image and recolor them in the original image. I went with red, but you can pick any color you like by entering new RGB values on a scale from 0-1 (red, for instance, is [1,0,0]). You must specify some contour value as the minimum threshold to keep. By trial and error, I found that 0.08 was a good threshold for this image.
 
 <br>
 
@@ -176,8 +179,8 @@ imnew <- im1
 
 for (x in imc[1]:imc[3]){ # within the box drawn before...
   for (y in imc[2]:imc[4]){
-    pix <- data.frame(imcont[which(imcont$x == x & imcont$y == y),])
-    if (pix$value > .1) { # if the pixel is a contour... 
+    pix <- data.frame(im1cont[which(im1cont$x == x & im1cont$y == y),])
+    if (pix$value > .08) { # if the pixel is a contour... 
       imnew[x,y,1,] <- c(1,0,0) # change the pixel color to red
       maskx <- append(maskx, x) 
       masky <- append(masky, y) # and save the coordinates of that pixel
@@ -196,7 +199,7 @@ What's the result?
 <br>
 
 ```{r plot recolored image 1}
-plot(imnew)
+plot(imnew, axes = F)
 ```
 
 <br>
@@ -205,14 +208,14 @@ Now we have the original image with the contours of the snowstake highlighted. W
 
 <br>
 
-We'll load in a second image (we'll pretend that there's not a snow stake in it):
+We'll load in a second image:
 
 <br>
 
 ```{r load image 2}
 l_im2 <- system.file("images", "image02.jpg", package = "contourr")
 im2 <- load.image("../images/image02.jpg")
-plot(im2)
+plot(im2, axes = F)
 ```
 
 <br>
@@ -225,7 +228,7 @@ Then we'll ask R to find the pixel coordinates in the second photo and change th
   for (j in 1:length(maskx)){
         im2[maskx[j], masky[j],1,] <- c(1,0,0)
   }
-plot(im2)
+plot(im2, axes = F)
 ```
 
 <br>
@@ -251,36 +254,42 @@ plot(im3, axes = F)
 
 <br>
 
-We know that the snow stake is roughly here:
+We know that the snow stake is here:
 
 
 ```{r image 3 snowstake, echo = F}
-imc3 <- c(80,95,91,251)
 plot(im3, axes = F)
-rect(imc3[1], imc3[2], imc3[3], imc3[4], border = "red")
+rect(imc[1], imc[2], imc[3], imc[4], border = "red")
 #imc <- grabRect(im3, output = "coord") # draw a box around the object of interest
 ```
 
 <br>
 
-However, the contourfinder function will not be able to find the snow stake. Both the snow stake and the snow behind it are overexposed, so there are no contours for the function to find.
+However, since the photo is overexposed, the edges of the snow stake are blurred and a lot of the contours are lost. 
+
+<br>
+
+```{r image 3 contours, echo = F}
+im3gr <- enorm(imgradient(grayscale(im3),"xy"))
+plot(im3gr)
+```
 
 <br>
 
 When you run the contourfinder function on this image, this is the result:
 
+<br>
+
 ```{r contourfinder image 3, echo = F}
-im3cont <- as.data.frame(enorm(imgradient(grayscale(im3),"xy")))
+im3cont <- as.data.frame(im3gr)
 
 im3new <- im3
 
-for (x in imc3[1]:imc3[3]){ # within the box drawn before...
-  for (y in imc3[2]:imc3[4]){
+for (x in imc[1]:imc[3]){ # within the box drawn before...
+  for (y in imc[2]:imc[4]){
     pix <- data.frame(im3cont[which(im3cont$x == x & im3cont$y == y),])
-    if (pix$value > .1) { # if the pixel is a contour... 
+    if (pix$value > .08) { # if the pixel is a contour... 
       im3new[x,y,1,] <- c(1,0,0) # change the pixel color to red
-      maskx <- append(maskx, x) 
-      masky <- append(masky, y) # and save the coordinates of that pixel
   } else {
       im3new[x,y,1,] <- im3[x,y,1,] # or else keep it the original color
       }
@@ -292,7 +301,7 @@ plot(im3new, axes = F)
 
 <br>
 
-Not the most useful snow stake, is it? So it is important than you have at least one good image of the reference object in order for this package to be useful.
+If I didn't have those strips of bright tape at the 10 cm marks, then my snow stake would be completely useless. So it is important than you have at least one good image of the reference object in order for contourr to be useful.
 
 <br>
 
