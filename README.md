@@ -3,18 +3,21 @@ This package contains a few simple functions for finding an object in one image 
 
 ### Prerequisites
 
-This package relies on the package "imager". The webpage for imager can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager).
+This package relies on the package "imager". The webpage for imager can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager). For building the vignette, also make sure you have devtools.
 
 ```
 install.packages("imager")
+install_packages("devtools")
+library(imager)
+library(devtools)
 ```
 
 ### Installing
 
-Install **contourr** via Github using standard operating procedure.
+I initally had trouble rendering the vignette, so when installing **contourr** via GitHub, specify "build_vignettes = TRUE". The package will take a little while to run because of the image files in the vignette, but I hope the effort will be worth it.
 
 ```
-devtools::install_github("kaitlynstrickfaden/contourr")
+devtools::install_github("kaitlynstrickfaden/contourr", build_vignettes = TRUE)
 library(contourr)
 ```
 
@@ -27,7 +30,7 @@ For now, this package contains just two functions:
 
 ## Important Notes
 
-* **The bigger your images are, the longer these functions will take to run.** If you are using these functions on a lot of images, it will probably be in your best interest to resize them first. 
+* **The bigger your images are, the longer these functions will take to run.** If you are running these functions on a lot of images, it will probably be in your best interest to resize them first. 
 * For the functions to work as intended, all of your images must be the same size. For now, your newly-saved files will be the same size as the original files, but I will make this more flexible if there is interest.
 * Your outputs will all be .jpg files, but again, if there is interest, I will make this more flexible.
 
