@@ -14,7 +14,7 @@ library(devtools)
 
 ### Installing
 
-I initally had trouble rendering the vignette, so when installing **contourr** via GitHub, specify "build_vignettes = TRUE". The package will take a little while to run because of the image files in the vignette, but I hope the effort will be worth it.
+When installing **contourr**, specify "build_vignettes = TRUE". The package will take a little while to run because of the image files in the vignette, but I hope the effort will be worth it.
 
 ```
 devtools::install_github("kaitlynstrickfaden/contourr", build_vignettes = TRUE)
@@ -27,6 +27,8 @@ For now, this package contains just two functions:
 
 * **contourfinder:** a function for finding and highlighting contours in a single image, with the option to save the recolored image. The main purpose of this function is for the user to tinker with contour values to find the one best suited to their reference image.
 * **overlay:** a function for applying contour lines to a new set of images. This function builds on the contourfinder function by applying the same recolored pixels to a new set of images. It also saves the recolored images.
+
+You can see these functions in action by referring to the [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr.md).
 
 ## Important Notes
 
