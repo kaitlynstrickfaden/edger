@@ -21,6 +21,10 @@
 
 overlay <- function(ref_image, contourvalue, rgbcolor = c(1,0,0), output_ref_image, image_names, output_image_names, imwidth, imht){
 
+  if (length(image_names) != length(output_image_names)){
+    stop("image_names and output_image_names must be the same length")
+  }
+
   st <- Sys.time()
 
   im <- load.image(ref_image)

@@ -11,9 +11,7 @@ Description: This package allows the user to read in a "reference image",
     specify a region of interest, and highlight contours within that
     region. It then finds those pixels in a new image(s) and recolors 
     them. This gives the user the ability to find an object of interest 
-    in an image and overlay it onto new images. The original intent for 
-    this package was to overlay a measuring stake onto images to measure
-    snow with game cameras. Other potential applications are likely.
+    in an image and overlay it onto new images.
 License: MIT
 Encoding: UTF-8
 LazyData: true
