@@ -284,7 +284,11 @@ change them to red as well.
 <br>
 
 Hooray! We’ve successfully found the snowstake in one image and overlaid
-it onto a new image.
+it onto a new image. Notice that the snow stake is now inside the door
+rather than on the floor. All the code does is remember the contour
+coordinates from the reference image and recolor them in the new image.
+It’s not smart enough (yet) to adjust the location of the snow stake if
+the camera viewshed changes.
 
 <br>
 
@@ -329,8 +333,8 @@ result:
 
 If I didn’t have those strips of bright tape at the 10 cm marks, then my
 snow stake would be completely useless. So it is important than you have
-at least one good image of the reference object in order for contourr to
-be useful.
+at least one good image of the reference object in order for
+**contourr** to be useful.
 
 <br>
 
