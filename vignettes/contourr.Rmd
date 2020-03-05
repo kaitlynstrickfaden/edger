@@ -49,11 +49,11 @@ I set out to create what my research team and I have coined the *virtual snow st
 
 <br>
 
-This code uses package **imager**, which is one of few image processing packages in R. This particular package has some handy built-in functions that we will be using to save a little time and computing power.
+This code uses package "imager", which is one of few image processing packages in R. This particular package has some handy built-in functions that we will be using to save a little time and computing power.
 
 <br>
 
-Let's take a look at an image using **imager**'s "load.image" function.
+Let's take a look at an image using imager's "load.image" function.
 
 <br>
 
@@ -68,7 +68,7 @@ A color image is the combined result of three layers of pixels, one layer each f
 
 <br>
 
-```{r rgb image, echo = F}
+```{r rgb image}
 red <- im1
 red[,,,c(2:3)] <- c(0,0)
 
@@ -99,7 +99,7 @@ Now we have a black and white version of our image. This is the image from which
 
 <br>
 
-A contour is just an edge in an image; the "imgradient" function in **imager** compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
+A contour is just an edge in an image; the "imgradient" function in imager compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
 
 <br>
 
@@ -111,7 +111,7 @@ plot(im1xy, layout = "row", axes = F)
 
 <br>
 
-Next, we'll find the distance between the contour values in the x contour plot and the values in the y contour plot at each pixel coordinate. When either x or y are a contour, there is a greater distance between the two values. Normalizing these distances lets us give greater weight to places in the image where there are contours. **imager** has a function called "enorm" which does these calculations for us. When we run the enorm function on the x and y contours of an image, the result is a single image which looks like this:
+Next, we'll find the Euclydian distance between the values in the x contour plot and the values in the y contour plot. When either x or y are a contour, there is a greater distance between the two values. Normalizing these distances lets us give greater weight to places in the image where there are contours. imager has a function called "enorm" which does these calculations for us. When we find the x and y contours in an image and then perform Euclydian normalization, the result is a single image which looks like this:
 
 <br>
 
@@ -134,11 +134,11 @@ This is the image upon which this methodology stands. Love it, respect it, cheri
 
 <br>
 
-We don't necessarily want to find *every* contour in an image; in my case, I only want the contours of the snowstake. Fortunately, **imager** has functions that allow you to output the coordinates of particular points, lines, or rectangles that you draw on an image. This lets us limit our search for contours to just a region we care about.
+We don't necessarily want to find *every* contour in an image; in my case, I only want the contours of the snowstake. Fortunately, imager has functions that allow you to output the coordinates of particular points, lines, or rectangles that you draw on an image. This lets us limit our search for contours to just a region we care about.
 
 <br>
 
-The package will allow you to draw your own region using the "grabRect" function. This feature doesn't play nicely with vignettes, so I've defined a rectangle below. But if you open the rMarkdown version of the vignette and run thes code chunk by chunk, you an uncomment the "grabRect" line in the code chunk below to define your own region of interest.
+The package will allow you to draw your own region using the "grabRect" function. However, this feature doesn't play nicely with vignettes, so I've defined a rectangle below. But if you're viewing this code in rMarkdown and are running it chunk-by-chunk, the grabRect function will work.
 
 <br>
 
@@ -198,7 +198,7 @@ What's the result?
 
 <br>
 
-```{r plot recolored image 1, echo = F}
+```{r plot recolored image 1}
 plot(imnew, axes = F)
 ```
 
@@ -246,7 +246,7 @@ Hooray! We've successfully found the snowstake in one image and overlaid it onto
 
 Here's one more example image:
 
-```{r image 3, echo = F, echo = F}
+```{r image 3, echo = F}
 im3 <- load.image("../images/image03.jpg")
 plot(im3, axes = F)
 ```
