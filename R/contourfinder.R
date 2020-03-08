@@ -20,6 +20,12 @@
 
 contourfinder <- function(ref_image, contourvalue, rgbcolor = c(1,0,0), save = FALSE, output_ref_image = NA, imwidth = NA, imht = NA){
 
+  if (is.vector(rgbcolor) == FALSE | length(rgbcolor) != 3){
+    stop("rgbcolor must be a numeric vector with length 3")}
+  if (!is.na(output_ref_image)){
+    if (!endsWith(output_ref_image, ".jpeg")){
+        stop("output_ref_image must be a .jpeg file")}
+  }
 
   # Load in & prep the data
   im <- imager::load.image(ref_image)

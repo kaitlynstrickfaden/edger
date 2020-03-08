@@ -22,8 +22,9 @@
 overlay <- function(ref_image, contourvalue, rgbcolor = c(1,0,0), output_ref_image, image_names, output_image_names, imwidth, imht){
 
   if (length(image_names) != length(output_image_names)){
-    stop("image_names and output_image_names must be the same length")
-  }
+    stop("image_names and output_image_names must be the same length")}
+  if (is.vector(rgbcolor) == FALSE | length(rgbcolor) != 3){
+    stop("rgbcolor must be a numeric vector with length 3")}
 
   st <- Sys.time()
 
@@ -40,7 +41,7 @@ overlay <- function(ref_image, contourvalue, rgbcolor = c(1,0,0), output_ref_ima
     for (y in imc[2]:imc[4]){
       pix <- data.frame(imcont[which(imcont$x == x & imcont$y == y),])
       if (pix$value > contourvalue) { # if the pixel is a contour...
-        imnew[x,y,1,] <- rgbcolor
+        imnew[x,y,1,] <- rgbcolor #change its color
         maskx <- append(maskx, x)
         masky <- append(masky, y)
       } else {
@@ -61,11 +62,10 @@ overlay <- function(ref_image, contourvalue, rgbcolor = c(1,0,0), output_ref_ima
   par(mar = c(0,0,0,0))
   plot(imnew)
 
-  # Create the object "mask"
+  # Apply the "mask" to new images
 
   for (i in 1:length(image_names)){
     im2 <- load.image(image_names[i])
-
 
     # find the same pixels in the next image and recolor them
     for (j in 1:length(maskx)){
