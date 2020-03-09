@@ -21,11 +21,23 @@ library(contourr)
 library(imager)
 ```
 
-#  The Virtual Snow Stake
+#  The Virtual Snow Stake Idea
 
 <br>
 
-The **contourr** package provides a simple method for extracting the outlines of an object of interest in one image and overlaying the same outlines onto new images. This vignette is a step-by-step decription of the methodology.
+In many natural resource fields, and particularly in wildlife studies, R is the prevailing coding language.  In the Python coding language, lots of packages exist that allow a user to creatively manipulate and analyze images to answer questions. Comparatively few packages exist to process images in R; a quick search for "image processing" in Github turns up 6,766 repositories written in Python and a measly 97 written in R. Even fewer take advantage of the properties of images to solve problems.  This code is my attempt to translate a common Python methodology into the R language.
+
+<br>
+
+Wildlife biologists are moving towards using non-invasive methods to study wildlife populations. Remote cameras are one such method that can be placed almost anywhere, require little upkeep beyond the set-up and take-down, and, when deployed without bias, allow biologists to estimate wildlife population sizes in a study area. They are an increasingly common and very powerful tool for informing wildlife management decisions. But are there other questions, particularly habitat-related questions, that researchers can begin to answer with cameras while they are estimating population sizes? My current research interest is in snow; specifically, I'm interested in whether cameras can be used to measure snow depth. Cameras can be programmed to take pictures at time intervals, giving me a snapshot of snow conditions at a camera site every hour. They also record temperatures, an obviously useful metric when thinking about snow. 
+
+<br>
+
+Currently, snow researchers using cameras leave measuring stakes at the camera site to measure snow. This is fine for snow research, but if the hope is to measure snow and simultaneously collect images of animals, we worry that leaving equipment in front of a camera will affect animal movement, weakening our population inferences. We also worry that the equipment will be tilted or knocked over, giving us no way to reliably measure the snow. Finally, in some places, the extra field effort to deploy snow-measuring equipment is just not cost-effective or feasible.
+
+<br>
+
+I set out to create what my research team and I have coined the *virtual snow stake*. Since cameras are in a fixed location, I can take a single picture of a measuring stake in a photo and then take advantage of some of the properties of images to overlay the outline of the snow stake onto subsequent photos. This allows me to measure snow in photos without leaving any equipment at the camera site. In the following code, I will describe the methodology in more detail and show it in action.
 
 <br>
 
@@ -37,11 +49,11 @@ The **contourr** package provides a simple method for extracting the outlines of
 
 <br>
 
-This code uses package **imager**, which is one of few image processing packages in R. This particular package has some handy built-in functions that we will be using to save a little time and computing power.
+This code uses package "imager", which is one of few image processing packages in R. This particular package has some handy built-in functions that we will be using to save a little time and computing power.
 
 <br>
 
-Let's take a look at an image using **imager**'s "load.image" function.
+Let's take a look at an image using imager's "load.image" function.
 
 <br>
 
@@ -73,7 +85,7 @@ plot(blue, axes = F)
 ```
 <br>
 
-Color images can be converted to grayscale. There are about a million ways to convert a color image to grayscale, but **imager** converts the luminance (brightness) of a pixel into a shade of gray. Let's see what that looks like for our image:
+Color images can be converted to grayscale. There are about a million ways to convert a color image to grayscale, but imager converts the luminance (brightness) of a pixel into a shade of gray. Let's see what that looks like for our image:
 
 <br>
 
@@ -87,7 +99,7 @@ Now we have a black and white version of our image. This is the image from which
 
 <br>
 
-A contour is just an edge in an image; the "imgradient" function in **imager** compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
+A contour is just an edge in an image; the "imgradient" function in imager compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
 
 <br>
 
@@ -99,7 +111,7 @@ plot(im1xy, layout = "row", axes = F)
 
 <br>
 
-Next, we'll find the distance between the values in the x contour plot and the values in the y contour plot at each pixel coordinate. When either x or y are a contour, there is a greater distance between the two values. Normalizing these distances lets us give greater weight to places in the image where there are contours. **imager** has a function called "enorm" which does these calculations for us. When we take the distance between the x and y contour plots, the result is a single image which looks like this:
+Next, we'll find the Euclydian distance between the values in the x contour plot and the values in the y contour plot. When either x or y are a contour, there is a greater distance between the two values. Normalizing these distances lets us give greater weight to places in the image where there are contours. imager has a function called "enorm" which does these calculations for us. When we find the x and y contours in an image and then perform Euclydian normalization, the result is a single image which looks like this:
 
 <br>
 
@@ -122,11 +134,11 @@ This is the image upon which this methodology stands. Love it, respect it, cheri
 
 <br>
 
-We don't necessarily want to find *every* contour in an image; in my case, I only want the contours of the measuring stake. Fortunately, **imager** has functions that allow you to output the coordinates of particular points, lines, or rectangles that you draw on an image. This lets us limit our search for contours to just a region we care about.
+We don't necessarily want to find *every* contour in an image; in my case, I only want the contours of the snowstake. Fortunately, imager has functions that allow you to output the coordinates of particular points, lines, or rectangles that you draw on an image. This lets us limit our search for contours to just a region we care about.
 
 <br>
 
-**imager** will allow you to draw your own region using the "grabRect" function. This feature doesn't play nicely with vignettes, so I've defined a rectangle below. But if you want to define your own region, open the rMarkdown script and un-comment the "grabRect" line.
+The package will allow you to draw your own region using the "grabRect" function. However, this feature doesn't play nicely with vignettes, so I've defined a rectangle below. But if you're viewing this code in rMarkdown and are running it chunk-by-chunk, the grabRect function will work.
 
 <br>
 
@@ -158,7 +170,7 @@ masky <- NULL
 
 <br>
 
-This next code chunk will find the coordinates of the contours in the contour image and recolor them in the original image. I went with red, but you can pick any color you like by entering new RGB values on a scale from 0-1 (red, for instance, is (1,0,0)). You must specify some contour value as the minimum threshold to keep. By trial and error, I found that 0.08 was a good threshold for this image.
+This next code chunk will find the coordinates of the contours in the contour image and recolor them in the original image. I went with red, but you can pick any color you like by entering new RGB values on a scale from 0-1 (red, for instance, is [1,0,0]). You must specify some contour value as the minimum threshold to keep. By trial and error, I found that 0.08 was a good threshold for this image.
 
 <br>
 
@@ -192,7 +204,7 @@ plot(imnew, axes = F)
 
 <br>
 
-Now we have the original image with the contours of the measueing stake highlighted. We also know the coordinates of those pixels.  But this itself is not that useful; we already know where the measuring stake is in this photo. Let's apply this to a new photo.
+Now we have the original image with the contours of the snowstake highlighted. We also know the coordinates of those pixels.  But this itself is not that useful; we already know where the snowstake is in this photo. Let's apply this to a new photo.
 
 <br>
 
@@ -220,7 +232,7 @@ plot(im2, axes = F)
 
 <br>
 
-Hooray! We've successfully found the measuring stake in one image and overlaid it onto a new image. Notice that the stake is now inside the door rather than on the floor. All the code does is remember the contour coordinates from the reference image and recolor them in the new image. It's not smart enough (yet) to adjust the location of the stake if the camera viewshed changes.
+Hooray! We've successfully found the snowstake in one image and overlaid it onto a new image. Notice that the snow stake is now inside the door rather than on the floor. All the code does is remember the contour coordinates from the reference image and recolor them in the new image. It's not smart enough (yet) to adjust the location of the snow stake if the camera viewshed changes.
 
 <br>
 
@@ -241,7 +253,7 @@ plot(im3, axes = F)
 
 <br>
 
-We know that the measueing stake is here:
+We know that the snow stake is here:
 
 
 ```{r image 3 snowstake, echo = F}
@@ -252,7 +264,7 @@ rect(imc[1], imc[2], imc[3], imc[4], border = "red")
 
 <br>
 
-However, since the photo is overexposed, the edges of the stake are blurred and a lot of the contours are lost. 
+However, since the photo is overexposed, the edges of the snow stake are blurred and a lot of the contours are lost. 
 
 <br>
 
@@ -288,11 +300,11 @@ plot(im3new, axes = F)
 
 <br>
 
-If I didn't have those strips of bright tape at the 10 cm marks, then my measuring stake would be completely useless. So it is important than you have at least one good image of the reference object in order for **contourr** to be useful.
+If I didn't have those strips of bright tape at the 10 cm marks, then my snow stake would be completely useless. So it is important than you have at least one good image of the reference object in order for **contourr** to be useful.
 
 <br>
 
-Vegetation, camera movement, and camera tilting are also likely issues. I will continue to develop code to address these issues. Stay tuned!
+I can also imagine that vegetation, camera movement, and camera tilting will be issues. However, this package is still in very early method development, so I have no clue how big of an issue these problems will be, nor do I know how I would go about fixing them. I will continue to update this package and improve functionality as new issues arise.
 
 <br>
 
