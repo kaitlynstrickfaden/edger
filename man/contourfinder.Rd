@@ -9,9 +9,7 @@ contourfinder(
   contourvalue,
   rgbcolor = c(1, 0, 0),
   save = FALSE,
-  output_ref_image = NA,
-  imwidth = NA,
-  imht = NA
+  output_ref_image = NA
 )
 }
 \arguments{
@@ -24,10 +22,6 @@ contourfinder(
 \item{save}{Logical. Save the image as a new file. Default is FALSE.}
 
 \item{output_ref_image}{If save == TRUE, the name you want to give the output image.}
-
-\item{imwidth}{If save == TRUE, the output image width, in pixels.}
-
-\item{imht}{If save == TRUE, the output image height, in pixels .}
 }
 \value{
 A recolored image. If save == TRUE, will save the recolored image to your working directory
