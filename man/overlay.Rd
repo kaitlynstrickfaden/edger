@@ -25,13 +25,13 @@ overlay(
 
 \item{output_ref_image}{The name you want to give the output reference image.}
 
-\item{image_names}{a vector containing the names of the photos you want to recolor.}
+\item{image_names}{a vector containing the names of the images you want to recolor.}
 
 \item{output_image_names}{a vector containing the names of the recolored images. Must be the same length as image_names.}
 }
 \value{
-Recolored images. Will save the recolored image to your working directory
+Recolored images. Saves recolored images to your working directory
 }
 \description{
-Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.
+Find pixel coordinates of contours in defined regions of a reference image. Then, find and recolor the same pixels in new images.
 }

@@ -19,12 +19,12 @@ contourfinder(
 
 \item{rgbcolor}{A vector containing the rgb values for the color mask on a 0-1 scale. Default is c(1,0,0), which is pure red.}
 
-\item{save}{Logical. Save the image as a new file. Default is FALSE.}
+\item{save}{Logical. Save the output image as a jpeg. Default is FALSE.}
 
-\item{output_ref_image}{If save == TRUE, the name you want to give the output image.}
+\item{output_ref_image}{If save == TRUE, the name you want to give the output image. Must be a .jpeg}
 }
 \value{
-A recolored image. If save == TRUE, will save the recolored image to your working directory
+A recolored image. If save == TRUE, saves the recolored image to your working directory
 }
 \description{
 Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.

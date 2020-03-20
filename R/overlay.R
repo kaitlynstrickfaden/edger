@@ -2,7 +2,7 @@
 
 #' Overlay Contours Onto Images
 #'
-#' Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.
+#' Find pixel coordinates of contours in defined regions of a reference image. Then, find and recolor the same pixels in new images.
 #'
 #' @importFrom graphics par plot
 #' @import grDevices
@@ -13,9 +13,9 @@
 #' @param rgbcolor A vector containing the RGB values for the color mask on a 0-1 scale. Default is c(1,0,0), which is pure red
 #' @param regions A numeric indicating how many regions to draw. Default is 1
 #' @param output_ref_image The name you want to give the output reference image.
-#' @param image_names a vector containing the names of the photos you want to recolor.
+#' @param image_names a vector containing the names of the images you want to recolor.
 #' @param output_image_names a vector containing the names of the recolored images. Must be the same length as image_names.
-#' @return Recolored images. Will save the recolored image to your working directory
+#' @return Recolored images. Saves recolored images to your working directory
 #' @export
 
 

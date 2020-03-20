@@ -10,9 +10,9 @@
 #' @param ref_image The name of the input image
 #' @param contourvalue The minimum pixel value you want to keep (a low contour value captures weaker contrasts)
 #' @param rgbcolor A vector containing the rgb values for the color mask on a 0-1 scale. Default is c(1,0,0), which is pure red.
-#' @param save Logical. Save the image as a new file. Default is FALSE.
-#' @param output_ref_image If save == TRUE, the name you want to give the output image.
-#' @return A recolored image. If save == TRUE, will save the recolored image to your working directory
+#' @param save Logical. Save the output image as a jpeg. Default is FALSE.
+#' @param output_ref_image If save == TRUE, the name you want to give the output image. Must be a .jpeg
+#' @return A recolored image. If save == TRUE, saves the recolored image to your working directory
 #' @export
 
 
@@ -33,7 +33,7 @@ contourfinder <- function(ref_image, contourvalue, rgbcolor = c(1,0,0), save = F
   # Change pixel color at contours
   for (x in imc[1]:imc[3]){ # within the box drawn before...
     for (y in imc[2]:imc[4]){
-      pix <- data.frame(imcont[which(imcont$x == x & imcont$y == y),])
+      pix <- imcont[which(imcont$x == x & imcont$y == y),]
       if (pix$value > contourvalue) { # if the pixel is a contour...
         im[x,y,1,] <- rgbcolor
       }
