@@ -8,29 +8,26 @@ overlay(
   ref_image,
   contourvalue,
   rgbcolor = c(1, 0, 0),
+  regions = 1,
   output_ref_image,
   image_names,
-  output_image_names,
-  imwidth,
-  imht
+  output_image_names
 )
 }
 \arguments{
-\item{ref_image}{The name of the input reference image}
+\item{ref_image}{The name of the reference image}
 
 \item{contourvalue}{The minimum pixel value you want to keep (a low contour value captures weaker contrasts)}
 
-\item{rgbcolor}{A vector containing the RGB values for the color mask on a 0-1 scale. Default is c(1,0,0), which is pure red.}
+\item{rgbcolor}{A vector containing the RGB values for the color mask on a 0-1 scale. Default is c(1,0,0), which is pure red}
+
+\item{regions}{A numeric indicating how many regions to draw. Default is 1}
 
 \item{output_ref_image}{The name you want to give the output reference image.}
 
 \item{image_names}{a vector containing the names of the photos you want to recolor.}
 
-\item{output_image_names}{a vector containing the names for the new images with recolored pixels. Must be the same length as image_names.}
-
-\item{imwidth}{Image width, in pixels.}
-
-\item{imht}{Image height, in pixels .}
+\item{output_image_names}{a vector containing the names of the recolored images. Must be the same length as image_names.}
 }
 \value{
 Recolored images. Will save the recolored image to your working directory

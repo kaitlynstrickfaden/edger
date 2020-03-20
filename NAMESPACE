@@ -2,6 +2,7 @@
 
 export(contourfinder)
 export(overlay)
+import(dplyr)
 import(grDevices)
 import(imager)
 importFrom(graphics,par)

@@ -12,10 +12,11 @@ Description: This package allows the user to read in a "reference image",
     region. It then finds those pixels in a new image(s) and recolors 
     them. This gives the user the ability to find an object of interest 
     in an image and overlay it onto new images.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
+    dplyr,
     graphics,
     grDevices,
     imager
