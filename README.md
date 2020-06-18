@@ -3,7 +3,7 @@ This package contains a few simple functions for finding an object in one image 
 
 ### Prerequisites
 
-This package relies on the package `imager`. The webpage for `imager` can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager). For building the vignette, also make sure you have devtools.
+This package relies on the package `imager`. The webpage for `imager` can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager). For building the vignette, also make sure you have `devtools`.
 
 ```
 install.packages("imager")
@@ -28,7 +28,7 @@ For now, this package contains just two functions:
 * `ct_find`: a function for finding and highlighting contours in a single image, with the option to save the recolored image. The main purpose of this function is for the user to tinker with contour values to find the one best suited to their image.
 * `ct_overlay`: a function for applying contour lines to a new set of images. This function builds on the `ct_find` function by applying the same recolored pixels to a new set of images. It also saves the recolored images.
 
-You can see these functions in action by referring to the [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr.md).
+You can see these functions in action by referring to the `contourr` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr.md).
 
 ## Important Notes
 
