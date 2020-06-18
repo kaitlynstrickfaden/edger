@@ -1,11 +1,15 @@
 ---
 title: "contourr"
+author: "Kaitlyn Strickfaden"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{contourr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+<br>
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -18,11 +22,25 @@ knitr::opts_chunk$set(
 
 ```{r setup, include = F}
 library(imager)
+library(dplyr)
 ```
+
+<br>
 
 #  The Virtual Snow Stake
 
-The **contourr** package provides a simple method for extracting the outlines of an object of interest in one image and overlaying the same outlines onto new images. This vignette is a step-by-step decription of the methodology.
+The `contourr` package provides a simple method for extracting the outlines of an object of interest in one image and overlaying the same outlines onto new images. This vignette is a step-by-step decription of the methodology.
+
+<br>
+
+Right now, this package includes two functions:
+
+- `ct_find`: find and recolor outlines in just one image, with the option to save the output image. Useful for tinkering with contour values until you find the right one for your image.
+- `ct_overlay`: find and recolor outlines in one image, then overlay those outlines onto a set of other images.
+
+<br>
+
+It's really important that the object you want to extract contrasts with the background. If the image is overexposed or underexposed, or if the object is a similar color to the background, the method described below won't work.
 
 <br>
 
@@ -34,16 +52,18 @@ The **contourr** package provides a simple method for extracting the outlines of
 
 <br>
 
-This code uses the package **imager**, which is one of few image processing packages in R. This particular package has some handy built-in functions that we will be using to save a little time and computing power.
+This code uses the package `imager`, which is one of few image processing packages in R. This particular package has some handy built-in functions that we will be using to save a little time and computing power.
 
 <br>
 
-Let's take a look at an image using **imager**'s "load.image" function.
+Let's take a look at an image using `imager`'s "load.image" function. I'll also convert it into a dataframe and give each pixel a unique index to make it easier to manipulate later.
 
 <br>
 
 ```{r load image 1}
 im1 <- load.image("../images/image01.jpg")
+im1_df <- as.data.frame(im1)
+im1_df$id <- rep(1:(dim(im1)[1] * dim(im1)[2]), times = 3)
 plot(im1)
 ```
 
@@ -70,7 +90,7 @@ plot(blue, axes = F)
 ```
 <br>
 
-Color images can be converted to grayscale. There are about a million ways to convert a color image to grayscale, but **imager** converts the luminance (brightness) of a pixel into a shade of gray. Let's see what that looks like for our image:
+Color images can be converted to grayscale. There are about a million ways to convert a color image to grayscale, but `imager` converts the luminance (brightness) of a pixel into a shade of gray. Let's see what that looks like for our image:
 
 <br>
 
@@ -84,27 +104,29 @@ Now we have a black and white version of our image. This is the image from which
 
 <br>
 
-A contour is just an edge in an image; the "imgradient" function in **imager** compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
+A contour is just an edge in an image; the `imgradient` function in `imager` compares the value of one pixel to the values of the pixels immediately around it. Greater differences between neighboring pixels will give a pixel a larger contour value, while weaker differences will give a smaller contour value. Images have x contours and y contours, which look like this:
 
 <br>
 
 ```{r xy contours}
 par(mar = c(.1,.1,.1,.1))
-im1xy <- imgradient(grayscale(im1), "xy")
-plot(im1xy, layout = "row", axes = F)
+im1_xy <- imgradient(grayscale(im1), "xy")
+plot(im1_xy, layout = "row", axes = F)
 ```
 
 <br>
 
-Next, we'll find the distance between the values in the x contour plot and the values in the y contour plot at each pixel coordinate. When either x or y are a contour, there is a greater distance between the two values. Normalizing these distances lets us give greater weight to places in the image where there are contours. **imager** has a function called "enorm" which does these calculations for us. When we find the distances between the pixels in the x and y contour plots, the result is a single image which looks like this:
+Next, we'll find the distance between the values in the x contour plot and the values in the y contour plot at each pixel coordinate. When either x or y are a contour, there is a greater distance between the two values. Normalizing these distances lets us give greater weight to places in the image where there are contours. `imager` has a function called `enorm` which does these calculations for us. When we find the distances between the pixels in the x and y contour plots, the result is a single image which looks like this:
 
 <br>
 
 ```{r contour image}
-im1gr <- enorm(imgradient(grayscale(im1),"xy"))
-im1cont <- as.data.frame(im1gr)
-plot(im1gr, axes = F)
+im1_gr <- enorm(imgradient(grayscale(im1),"xy"))
+im1_bw <- as.data.frame(im1_gr)
+im1_bw$id <- 1:length(im1_bw$x) 
+plot(im1_gr, axes = F)
 ```
+
 <br>
 
 This is the image upon which this methodology stands. Love it, respect it, cherish it. Also, save it as a data frame, because we'll need it later.
@@ -119,31 +141,34 @@ This is the image upon which this methodology stands. Love it, respect it, cheri
 
 <br>
 
-We don't necessarily want to find *every* contour in an image; in my case, I only want the contours of the measuring stake. Fortunately, **imager** has functions that allow you to output the coordinates of particular points, lines, or rectangles that you draw on an image. This lets us limit our search for contours to just a region we care about.
+We don't necessarily want to find *every* contour in an image; in my case, I only want the contours of the measuring stake. Fortunately, `imager` has functions that allow you to output the coordinates of particular points, lines, or rectangles that you draw on an image. This lets us limit our search for contours to just a region we care about.
 
 <br>
 
-The package will allow you to draw your own region using the "grabRect" function. I define my region of interest:
+The package will allow you to draw in a region of interest using the "grabRect" function. I define my region of interest...
 
 <br>
 
 ```{r rectangle grab}
-#imc <- grabRect(im1, output = "coord") # draw a box around the object of interest
-imc <- c(187,30,202,229)
+#im_c <- grabRect(im1, output = "coord") # draw a box around the object of interest
+im_c <- c(187,30,202,229)
 plot(im1, axes = F)
-rect(imc[1], imc[2], imc[3], imc[4], border = "red")
+rect(im_c[1], im_c[2], im_c[3], im_c[4], border = "red")
 ```
 
 <br>
 
-Later, we will want to know which particular pixels in the region are the contours, so we'll create variables to store that information.
+And then filter out the pixels outside of this box so R isn't dealing with so much data.
+
+```{r filter 1}
+roi <- filter(im1_bw,
+                   x >= im_c[1] & x <= im_c[3] &
+                     y >= im_c[2] & y <= im_c[4])
+```
 
 <br>
 
-```{r mask variables}
-maskx <- NULL
-masky <- NULL
-```
+`ct_find` and `ct_overlay` both allow you to set the number of regions so you can define several regions of interest if you need.
 
 <br>
 
@@ -155,26 +180,24 @@ masky <- NULL
 
 <br>
 
-This next code chunk will find the coordinates of the contours in the contour image and recolor them in the original image. I went with red, but you can pick any color you like by entering new RGB values on a scale from 0-1 (red, for instance, is [1,0,0]). You must specify some contour value as the minimum threshold to keep. By trial and error, I found that 0.1 was a good threshold for this image.
+This next code chunk will find the coordinates of the contours in the contour image and recolor them in the original image. You must specify some contour value as the minimum threshold to keep. By trial and error, I found that 0.1 was a good `contourvalue` for this image.
 
 <br>
 
 ```{r recolor image 1}
-imnew <- im1
+## Find contours in region of interest
 
-for (x in imc[1]:imc[3]){ # within the box drawn before...
-  for (y in imc[2]:imc[4]){
-    pix <- data.frame(im1cont[which(im1cont$x == x & im1cont$y == y),])
-    if (pix$value > .1) { # if the pixel is a contour... 
-      imnew[x,y,1,] <- c(1,0,0) # change the pixel color to red
-      maskx <- append(maskx, x) 
-      masky <- append(masky, y) # and save the coordinates of that pixel
-  } else {
-      imnew[x,y,1,] <- im1[x,y,1,] # or else keep it the original color
-      }
-    }
-}
+roi_c <- roi[roi$value >= .1,]
 
+## Find contour pixels in full image
+
+m <- im1_df$id[match(roi_c$id, im1_df$id)]
+
+## Recolor contour pixels in full image
+
+rgbcolor <- col2rgb("red")/255
+
+im1_df$value[im1_df$id %in% m] <- rep(rgbcolor, each = length(m))
 ```
 
 <br>
@@ -184,7 +207,8 @@ What's the result?
 <br>
 
 ```{r plot recolored image 1}
-plot(imnew, axes = F)
+im1_new <- as.cimg(im1_df, dim = dim(im1)) 
+plot(im1_new, axes = F)
 ```
 
 <br>
@@ -199,6 +223,8 @@ We'll load in a second image:
 
 ```{r load image 2}
 im2 <- load.image("../images/image02.jpg")
+im2_df <-as.data.frame(im2) 
+im2_df$id <- 1:length(im1_bw$x)
 plot(im2, axes = F)
 ```
 
@@ -209,87 +235,17 @@ Then we'll ask R to find the pixel coordinates in the second photo and change th
 <br>
 
 ```{r recolor image 2}
-  for (j in 1:length(maskx)){
-        im2[maskx[j], masky[j],1,] <- c(1,0,0)
-  }
-plot(im2, axes = F)
+## Recolor contour pixels in full image
+
+im2_df$value[im2_df$id %in% m] <- rep(rgbcolor, each = length(m))
+
+im2_new <- as.cimg(im2_df, dim = dim(im2))
+plot(im2_new)
 ```
 
 <br>
 
-Hooray! We've successfully found the stake in one image and overlaid it onto a new image. Notice that the stake is now inside the door rather than on the floor. All the code does is remember the contour coordinates from the reference image and recolor them in the new image. It's not smart enough (yet) to adjust the location of the stake if the camera viewshed changes.
-
-<br>
-
----
-
-<br>
-
-## Caveats
-
-<br>
-
-Here's one more example image:
-
-```{r image 3, echo = F}
-im3 <- load.image("../images/image03.jpg")
-plot(im3, axes = F)
-```
-
-<br>
-
-We know that the stake is here:
-
-
-```{r image 3 snowstake, echo = F}
-plot(im3, axes = F)
-rect(imc[1], imc[2], imc[3], imc[4], border = "red")
-#imc <- grabRect(im3, output = "coord") # draw a box around the object of interest
-```
-
-<br>
-
-However, since the photo is overexposed, the edges of the stake are blurred and a lot of the contours are lost. 
-
-<br>
-
-```{r image 3 contours, echo = F}
-im3gr <- enorm(imgradient(grayscale(im3),"xy"))
-plot(im3gr, axes = F)
-```
-
-<br>
-
-When you run the contourfinder function on this image, this is the result:
-
-<br>
-
-```{r contourfinder image 3, echo = F}
-im3cont <- as.data.frame(im3gr)
-
-im3new <- im3
-
-for (x in imc[1]:imc[3]){ # within the box drawn before...
-  for (y in imc[2]:imc[4]){
-    pix <- data.frame(im3cont[which(im3cont$x == x & im3cont$y == y),])
-    if (pix$value > .1) { # if the pixel is a contour... 
-      im3new[x,y,1,] <- c(1,0,0) # change the pixel color to red
-  } else {
-      im3new[x,y,1,] <- im3[x,y,1,] # or else keep it the original color
-      }
-    }
-}
-
-plot(im3new, axes = F)
-```
-
-<br>
-
-If I didn't have those strips of bright tape at the 10 cm marks, then my stake would be completely useless. So it is important than you have at least one good image of the reference object in order for **contourr** to be useful.
-
-<br>
-
-Vegetation, camera movement, and camera tilting are also likely issues, and I will develop more functions to deal with these issues.
+Hooray! We've successfully found the stake in one image and overlaid it onto a new image. Notice that the stake is now inside the door rather than on the floor. All the code does is remember the contour coordinates from the reference image and recolor them in the new image. It's not smart enough (yet) to adjust the location of the stake if the camera viewshed changes. Camera movement and tilting are issues I plan on tackling eventually.
 
 <br>
 
@@ -301,7 +257,7 @@ Vegetation, camera movement, and camera tilting are also likely issues, and I wi
 
 <br>
 
-This package, or at least this methodology, will likely be useful for many camera applications which require some reference object. For instance, someone who was interested in being able to measure how far away animals are from cameras might be able to overlay a grid onto images. Or, someone who was interested in measuring the animals themselves might be able to use a similar method to mine, given that they know where the measurements will be valid (e.g. we can accurately measure a fisher that is within a meter of this particular tree, but if it is more than a meter from this tree, the measurement may not be valid). 
+This package, or at least this methodology, will likely be useful for many camera applications which require some reference object. For instance, someone who was interested in being able to measure how far away animals are from cameras might be able to overlay a grid onto images. Or, someone who was interested in measuring the animals themselves might be able to use a similar method to mine, given that they know where the measurements will be valid.
 
 <br>
 
