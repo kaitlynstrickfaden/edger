@@ -7,7 +7,7 @@ The Virtual Snow Stake
 
 The `contourr` package provides a simple method for extracting the
 outlines of an object of interest in one image and overlaying the same
-outlines onto new images. This vignette is a step-by-step decription of
+outlines onto new images. This vignette is a step-by-step description of
 the methodology.
 
 <br>
