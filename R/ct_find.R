@@ -54,8 +54,6 @@ ct_find <- function(ref_image,
 
   ## Define region of interest
 
-  im_roi <- grabRect(im, output = "coord")
-
   roi <- NULL
 
   for (i in 1:regions){
