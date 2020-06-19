@@ -3,7 +3,7 @@ This package contains a few simple functions for finding an object in one image 
 
 ### Prerequisites
 
-This package relies on the package "imager". The webpage for imager can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager). For building the vignette, also make sure you have devtools.
+This package relies on the package `imager`. The webpage for `imager` can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager). For building the vignette, also make sure you have `devtools`.
 
 ```
 install.packages("imager")
@@ -14,7 +14,7 @@ library(devtools)
 
 ### Installing
 
-When installing **contourr**, specify "build_vignettes = TRUE". The package will take a little while to run because of the image files in the vignette, but I hope the effort will be worth it.
+When installing `contourr`, specify `build_vignettes = TRUE`.
 
 ```
 devtools::install_github("kaitlynstrickfaden/contourr", build_vignettes = TRUE)
@@ -25,16 +25,16 @@ library(contourr)
 
 For now, this package contains just two functions:
 
-* **contourfinder:** a function for finding and highlighting contours in a single image, with the option to save the recolored image. The main purpose of this function is for the user to tinker with contour values to find the one best suited to their reference image.
-* **overlay:** a function for applying contour lines to a new set of images. This function builds on the contourfinder function by applying the same recolored pixels to a new set of images. It also saves the recolored images.
+* `ct_find`: a function for finding and highlighting contours in a single image, with the option to save the recolored image. The main purpose of this function is for the user to tinker with contour values to find the one best suited to their image.
+* `ct_overlay`: a function for applying contour lines to a new set of images. This function builds on the `ct_find` function by applying the same recolored pixels to a new set of images. It also saves the recolored images.
 
-You can see these functions in action by referring to the [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr.md).
+You can see these functions in action by referring to the `contourr` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr.md).
 
 ## Important Notes
 
-* **The bigger your images are, the longer these functions will take to run.** If you are running these functions on a lot of images, it will probably be in your best interest to resize them first. 
-* For the functions to work as intended, all of your images must be the same size. For now, your newly-saved files will be the same size as the original files, but I will make this more flexible if there is interest.
-* Your outputs will all be .jpg files, but again, if there is interest, I will make this more flexible.
+* The method behind these functions relies on good contrast between the object you want to extract and the background. If your images are overexposed or underexposed, or if the object is the same color as the background, then the functions won't work.
+* For the functions to work as intended, all of your images must be the same size. Your newly-saved files will be the same size as the original files.
+* Your outputs will all be .jpg or .jpeg files, but again, if there is interest, I will make this more flexible.
 
 ## Contributing
 
@@ -50,4 +50,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-Huge thanks to the developers of imager, Simon Barthelme [aut, cre], David Tschumperle [ctb], Jan Wijffels [ctb], and Haz Edine [ctb].
+Huge thanks to the developers of `imager`, Simon Barthelme, David Tschumperle, Jan Wijffels, and Haz Edine.

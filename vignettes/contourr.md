@@ -7,7 +7,7 @@ The Virtual Snow Stake
 
 The `contourr` package provides a simple method for extracting the
 outlines of an object of interest in one image and overlaying the same
-outlines onto new images. This vignette is a step-by-step decription of
+outlines onto new images. This vignette is a step-by-step description of
 the methodology.
 
 <br>
@@ -285,6 +285,7 @@ change them to red as well.
 im2_df$value[im2_df$id %in% m] <- rep(rgbcolor, each = length(m))
 
 im2_new <- as.cimg(im2_df, dim = dim(im2))
+par(mar = c(0,0,0,0))
 plot(im2_new)
 ```
 
