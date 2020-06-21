@@ -34,7 +34,7 @@ You can see these functions in action by referring to the `contourr` [vignette](
 
 * The method behind these functions relies on good contrast between the object you want to extract and the background. If your images are overexposed or underexposed, or if the object is the same color as the background, then the functions won't work.
 * For the functions to work as intended, all of your images must be the same size. Your newly-saved files will be the same size as the original files.
-* Your outputs will all be .jpg or .jpeg files, but again, if there is interest, I will make this more flexible.
+* Recolored images are added to a "contourr_images" directory in your working directory.
 
 ## Contributing
 
