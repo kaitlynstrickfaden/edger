@@ -7,36 +7,28 @@
 #' @importFrom graphics par plot
 #' @import grDevices
 #' @import imager
+#' @import stringr
 #' @param ref_image The name of the input image.
 #' @param contourvalue The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.
 #' @param color A character string for the color of the superimposed object. Default is red.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
 #' @param save Logical. Save the output image. Default is FALSE.
-#' @param output_ref_image If save == TRUE, the name you want to give the output image. Must end in .jpg or .jpeg.
-#' @return A recolored image. If save == TRUE, saves the recolored image to your working directory.
+#' @return A recolored image. If save == TRUE, saves recolored image to a "contourr_images" directory in your working directory.
 #' @export
 
 
-ct_find <- function(ref_image,
+ct_find <- function(image,
                     contourvalue = 0.1,
                     color = "red",
                     regions = 1,
-                    save = FALSE,
-                    output_ref_image = NA)
-{
+                    save = FALSE)
 
-  if (save == TRUE){
-    if (is.na(output_ref_image)){
-      stop("must supply output_ref_image if save == TRUE")
-    }
-  }
-  if (is.character(color) == FALSE) {
-    stop("color must be of type character")}
+{
 
 
   ## Load in the image
 
-  im <- imager::load.image(ref_image)
+  im <- imager::load.image(image)
   im_df <- as.data.frame(im)
 
   ## Manipulate image for finding contours & make into df
@@ -76,7 +68,7 @@ ct_find <- function(ref_image,
 
   roi_c <- roi[roi$value >= contourvalue,]
 
-  ## Find contour pixels in full image
+  ## Match contour pixels in full image
 
   m <- im_df$id[match(roi_c$id, im_df$id)]
 
@@ -89,21 +81,27 @@ ct_find <- function(ref_image,
   ## Display the new image
 
   im <- as.cimg(im_df, dim = dim(im))
-
   par(mar = c(0,0,0,0))
   plot(im)
-
 
 
   ## Save new image if save == TRUE
 
   if (save == TRUE){
 
-    # Save new photo
-    jpeg(output_ref_image, width = dim(im)[1], height = dim(im)[2]) # begin creation of an image file
-    par(mar = c(0,0,0,0)) # remove axes and margins
-    plot(im) # plot new image
-    dev.off() # stop and save image file with contours drawn on it
+    dir.create("contourr_images")
+
+    image_split <- str_split(image, "\\.")[[1]]
+
+    image_end <- image_split[length(image_split)]
+
+    image_name <- paste("contourr_images/", image_split[1], "_contourr.", image_end, sep = "")
+
+
+    jpeg(image_name, width = dim(im)[1], height = dim(im)[2])
+    par(mar = c(0,0,0,0))
+    plot(im)
+    dev.off()
 
   } # End of save == TRUE
 

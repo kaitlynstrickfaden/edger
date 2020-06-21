@@ -8,38 +8,29 @@
 #' @import grDevices
 #' @import imager
 #' @import dplyr
-#' @param ref_image The name of the reference image.
+#' @import stringr
+#' @param images A vector containing image paths. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.
 #' @param contourvalue The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.
 #' @param color A character string for the color of the superimposed object. Default is red.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
-#' @param output_ref_image The name you want to give the output reference image.
-#' @param image_names a vector containing the names of the images you want to recolor.
-#' @param output_image_names a vector containing the names of the recolored images. Must be the same length as image_names. Must end in .jpg or .jpeg.
-#' @return Recolored images. Saves recolored images to your working directory.
+#' @return Recolored images. Saves recolored images to a "contourr_images" directory in your working directory.
 #' @export
 
 
 
 
-ct_overlay <- function(ref_image,
+ct_overlay <- function(images,
                        contourvalue = .1,
                        color = "red",
-                       regions = 1,
-                       output_ref_image,
-                       image_names,
-                       output_image_names){
+                       regions = 1)
 
-
-  if (length(image_names) != length(output_image_names)){
-    stop("image_names and output_image_names must be the same length")}
-  if (is.character(color) == FALSE) {
-    stop("color must be of type character")}
+{
 
   st <- Sys.time()
 
   ## Load in reference image
 
-  im <- imager::load.image(ref_image)
+  im <- imager::load.image(images[1])
   im_df <- as.data.frame(im)
 
   ## Manipulate image for finding contours & make into df
@@ -98,14 +89,32 @@ ct_overlay <- function(ref_image,
   plot(im)
 
 
+  # Save new photo
+
+  dir.create("contourr_images")
+
+  image_split1 <- str_split(images[1], "\\.")[[1]]
+
+  image_end1 <- image_split1[length(image_split1)]
+
+  image_name1 <- paste("contourr_images/", image_split1[1], "_contourr.", image_end1, sep = "")
+
+
+  jpeg(image_name1, width = dim(im)[1], height = dim(im)[2]) # begin creation of an image file
+  par(mar = c(0,0,0,0)) # remove axes and margins
+  plot(im) # plot new image
+  dev.off() # stop and save image file with contours drawn on it
+
+
+
 
   ## Apply the "mask" to new images
 
-  for (i in seq_along(image_names)){
+  for (i in 2:length(images)){
 
     ## Load in new image
 
-    im2 <- load.image(image_names[i])
+    im2 <- load.image(images[i])
     im2_df <- as.data.frame(im2)
     im2_df$id <- im_df$id
 
@@ -121,14 +130,21 @@ ct_overlay <- function(ref_image,
     plot(im2)
 
 
-    jpeg(output_image_names[i], width = dim(im2)[1], height = dim(im2)[2]) # begin creation of an image file
+    image_split <- str_split(images[i], "\\.")[[1]]
+
+    image_end <- image_split[length(image_split)]
+
+    image_name <- paste("contourr_images/", image_split[1], "_contourr.", image_end, sep = "")
+
+    # Save new photo
+    jpeg(image_name, width = dim(im2)[1], height = dim(im2)[2]) # begin creation of an image file
     par(mar = c(0,0,0,0)) # remove axes and margins
     plot(im2) # plot new image
-    dev.off() # save image file
+    dev.off() # stop and save image file with contours drawn on it
+
 
   } # End of recolor new images
 
   Sys.time() - st
 
 } # End of function
-

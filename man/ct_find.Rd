@@ -4,18 +4,9 @@
 \alias{ct_find}
 \title{Find and Highlight Contours}
 \usage{
-ct_find(
-  ref_image,
-  contourvalue = 0.1,
-  color = "red",
-  regions = 1,
-  save = FALSE,
-  output_ref_image = NA
-)
+ct_find(image, contourvalue = 0.1, color = "red", regions = 1, save = FALSE)
 }
 \arguments{
-\item{ref_image}{The name of the input image.}
-
 \item{contourvalue}{The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
@@ -24,10 +15,10 @@ ct_find(
 
 \item{save}{Logical. Save the output image. Default is FALSE.}
 
-\item{output_ref_image}{If save == TRUE, the name you want to give the output image. Must end in .jpg or .jpeg.}
+\item{ref_image}{The name of the input image.}
 }
 \value{
-A recolored image. If save == TRUE, saves the recolored image to your working directory.
+A recolored image. If save == TRUE, saves recolored image to a "contourr_images" directory in your working directory.
 }
 \description{
 Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.
