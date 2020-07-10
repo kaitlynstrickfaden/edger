@@ -5,10 +5,10 @@
 #' Find pixel coordinates of contours in defined regions of a reference image. Then, find and recolor the same pixels in new images.
 #'
 #' @importFrom graphics par plot
+#' @importfrom stringr str_split
+#' @import dplyr
 #' @import grDevices
 #' @import imager
-#' @import dplyr
-#' @import stringr
 #' @param images A vector containing image paths. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.
 #' @param contourvalue The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.
 #' @param color A character string for the color of the superimposed object. Default is red.
@@ -56,8 +56,8 @@ ct_overlay <- function(images,
     im_roi <- grabRect(im, output = "coord")
 
     roi2 <- filter(im_bw,
-                   x >= im_roi[1] & x <= im_roi[3] &
-                     y >= im_roi[2] & y <= im_roi[4])
+                   im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                   im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
 
     roi <- rbind(roi, roi2)
 
@@ -91,13 +91,11 @@ ct_overlay <- function(images,
 
   # Save new photo
 
-  dir.create("contourr_images")
-
-  image_split1 <- str_split(images[1], "\\.")[[1]]
+  image_split1 <- stringr::str_split(images[1], "\\.")[[1]]
 
   image_end1 <- image_split1[length(image_split1)]
 
-  image_name1 <- paste("contourr_images/", image_split1[1], "_contourr.", image_end1, sep = "")
+  image_name1 <- paste(image_split1[1], "_contourr.", image_end1, sep = "")
 
 
   jpeg(image_name1, width = dim(im)[1], height = dim(im)[2]) # begin creation of an image file
@@ -114,7 +112,7 @@ ct_overlay <- function(images,
 
     ## Load in new image
 
-    im2 <- load.image(images[i])
+    im2 <- imager::load.image(images[i])
     im2_df <- as.data.frame(im2)
     im2_df$id <- im_df$id
 
@@ -130,11 +128,11 @@ ct_overlay <- function(images,
     plot(im2)
 
 
-    image_split <- str_split(images[i], "\\.")[[1]]
+    image_split <- stringr::str_split(images[i], "\\.")[[1]]
 
     image_end <- image_split[length(image_split)]
 
-    image_name <- paste("contourr_images/", image_split[1], "_contourr.", image_end, sep = "")
+    image_name <- paste(image_split[1], "_contourr.", image_end, sep = "")
 
     # Save new photo
     jpeg(image_name, width = dim(im2)[1], height = dim(im2)[2]) # begin creation of an image file

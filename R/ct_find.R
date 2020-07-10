@@ -5,10 +5,11 @@
 #' Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.
 #'
 #' @importFrom graphics par plot
+#' @importfrom stringr str_split
+#' @import dplyr
 #' @import grDevices
 #' @import imager
-#' @import stringr
-#' @param ref_image The name of the input image.
+#' @param image The name of the input image.
 #' @param contourvalue The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.
 #' @param color A character string for the color of the superimposed object. Default is red.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
@@ -53,8 +54,8 @@ ct_find <- function(image,
     im_roi <- grabRect(im, output = "coord")
 
     roi2 <- filter(im_bw,
-                   x >= im_roi[1] & x <= im_roi[3] &
-                     y >= im_roi[2] & y <= im_roi[4])
+                   im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                   im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
 
     roi <- rbind(roi, roi2)
 
@@ -89,13 +90,13 @@ ct_find <- function(image,
 
   if (save == TRUE){
 
-    dir.create("contourr_images")
+    #dir.create("contourr_images")
 
-    image_split <- str_split(image, "\\.")[[1]]
+    image_split <- stringr::str_split(image, "\\.")[[1]]
 
     image_end <- image_split[length(image_split)]
 
-    image_name <- paste("contourr_images/", image_split[1], "_contourr.", image_end, sep = "")
+    image_name <- paste(image_split[1], "_contourr.", image_end, sep = "")
 
 
     jpeg(image_name, width = dim(im)[1], height = dim(im)[2])

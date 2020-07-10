@@ -7,6 +7,8 @@
 ct_find(image, contourvalue = 0.1, color = "red", regions = 1, save = FALSE)
 }
 \arguments{
+\item{image}{The name of the input image.}
+
 \item{contourvalue}{The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
@@ -14,8 +16,6 @@ ct_find(image, contourvalue = 0.1, color = "red", regions = 1, save = FALSE)
 \item{regions}{A numeric indicating how many regions to draw. Default is 1.}
 
 \item{save}{Logical. Save the output image. Default is FALSE.}
-
-\item{ref_image}{The name of the input image.}
 }
 \value{
 A recolored image. If save == TRUE, saves recolored image to a "contourr_images" directory in your working directory.

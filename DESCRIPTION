@@ -19,9 +19,11 @@ Imports:
     dplyr,
     graphics,
     grDevices,
-    imager
-RoxygenNote: 7.1.0
+    imager,
+    stringr
+RoxygenNote: 7.1.1
 Suggests: 
     knitr,
+    qpdf,
     rmarkdown
 VignetteBuilder: knitr
