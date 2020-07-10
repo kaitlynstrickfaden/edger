@@ -1,0 +1,3 @@
+"0","#im_c <- grabRect(im1, output = ""coord"") # draw a box around the object of interest"
+"0","im_c <- c(187,30,202,229)"
+"0","plot(im1, axes = F)"

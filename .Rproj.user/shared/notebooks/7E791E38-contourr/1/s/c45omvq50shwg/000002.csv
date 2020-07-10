@@ -1,0 +1,2 @@
+"0","im1 <- load.image(""../images/image01.jpg"")"
+"0","plot(im1)"

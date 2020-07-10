@@ -1,0 +1,4 @@
+"0","im1_gr <- enorm(imgradient(grayscale(im1),""xy""))"
+"0","im1_bw <- as.data.frame(im1_gr)"
+"0","im1_bw$id <- 1:length(im1_bw$x) "
+"0","plot(im1_gr, axes = F)"
