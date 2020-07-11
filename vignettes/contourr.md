@@ -1,9 +1,13 @@
-<br>
+contourr
+================
+Kaitlyn Strickfaden
+2020-07-11
 
 <br>
 
-The Virtual Snow Stake
-======================
+<br>
+
+# The Virtual Snow Stake
 
 The `contourr` package provides a simple method for extracting the
 outlines of an object of interest in one image and overlaying the same
@@ -14,10 +18,10 @@ the methodology.
 
 Right now, this package includes two functions:
 
--   `ct_find`: find and recolor outlines in just one image, with the
+  - `ct_find`: find and recolor outlines in just one image, with the
     option to save the output image. Useful for tinkering with contour
     values until you find the right one for your image.
--   `ct_overlay`: find and recolor outlines in one image, then overlay
+  - `ct_overlay`: find and recolor outlines in one image, then overlay
     those outlines onto a set of other images.
 
 <br>
@@ -29,12 +33,11 @@ won’t work.
 
 <br>
 
-------------------------------------------------------------------------
+-----
 
 <br>
 
-Methodology
------------
+## Methodology
 
 <br>
 
@@ -46,8 +49,8 @@ computing power.
 <br>
 
 Let’s take a look at an image using `imager`’s “load.image” function.
-I’ll also convert it into a dataframe and give each pixel a unique index
-to make it easier to manipulate later.
+I’ll also convert it into a dataframe and give each pixel a unique
+index to make it easier to manipulate later.
 
 <br>
 
@@ -58,7 +61,7 @@ im1_df$id <- rep(1:(dim(im1)[1] * dim(im1)[2]), times = 3)
 plot(im1)
 ```
 
-![](contourr_files/figure-markdown_github/load%20image%201-1.png)
+![](contourr_files/figure-gfm/load%20image%201-1.png)<!-- -->
 
 <br>
 
@@ -87,7 +90,7 @@ plot(green, axes = F)
 plot(blue, axes = F)
 ```
 
-![](contourr_files/figure-markdown_github/rgb%20image-1.png) <br>
+![](contourr_files/figure-gfm/rgb%20image-1.png)<!-- --> <br>
 
 Color images can be converted to grayscale. There are about a million
 ways to convert a color image to grayscale, but `imager` converts the
@@ -100,7 +103,7 @@ that looks like for our image:
 plot(grayscale(im1), axes = F)
 ```
 
-![](contourr_files/figure-markdown_github/grayscale%20image%201-1.png)
+![](contourr_files/figure-gfm/grayscale%20image%201-1.png)<!-- -->
 
 <br>
 
@@ -119,12 +122,12 @@ which look like this:
 <br>
 
 ``` r
-par(mar = c(.1,.1,.1,.1))
+par(mar = c(1,.1,1,.1))
 im1_xy <- imgradient(grayscale(im1), "xy")
 plot(im1_xy, layout = "row", axes = F)
 ```
 
-![](contourr_files/figure-markdown_github/xy%20contours-1.png)
+![](contourr_files/figure-gfm/xy%20contours-1.png)<!-- -->
 
 <br>
 
@@ -146,7 +149,7 @@ im1_bw$id <- 1:length(im1_bw$x)
 plot(im1_gr, axes = F)
 ```
 
-![](contourr_files/figure-markdown_github/contour%20image-1.png)
+![](contourr_files/figure-gfm/contour%20image-1.png)<!-- -->
 
 <br>
 
@@ -156,12 +159,11 @@ later.
 
 <br>
 
-------------------------------------------------------------------------
+-----
 
 <br>
 
-Define a Region of Interest
----------------------------
+## Define a Region of Interest
 
 <br>
 
@@ -185,7 +187,7 @@ plot(im1, axes = F)
 rect(im_c[1], im_c[2], im_c[3], im_c[4], border = "red")
 ```
 
-![](contourr_files/figure-markdown_github/rectangle%20grab-1.png)
+![](contourr_files/figure-gfm/rectangle%20grab-1.png)<!-- -->
 
 <br>
 
@@ -194,8 +196,8 @@ with so much data.
 
 ``` r
 roi <- filter(im1_bw,
-                   x >= im_c[1] & x <= im_c[3] &
-                     y >= im_c[2] & y <= im_c[4])
+              im1_bw$x >= im_c[1] & im1_bw$x <= im_c[3] &
+              im1_bw$y >= im_c[2] & im1_bw$y <= im_c[4])
 ```
 
 <br>
@@ -205,12 +207,11 @@ so you can define several regions of interest if you need.
 
 <br>
 
-------------------------------------------------------------------------
+-----
 
 <br>
 
-Highlight the Contours in An Image
-----------------------------------
+## Highlight the Contours in An Image
 
 <br>
 
@@ -248,7 +249,7 @@ im1_new <- as.cimg(im1_df, dim = dim(im1))
 plot(im1_new, axes = F)
 ```
 
-![](contourr_files/figure-markdown_github/plot%20recolored%20image%201-1.png)
+![](contourr_files/figure-gfm/plot%20recolored%20image%201-1.png)<!-- -->
 
 <br>
 
@@ -270,7 +271,7 @@ im2_df$id <- 1:length(im1_bw$x)
 plot(im2, axes = F)
 ```
 
-![](contourr_files/figure-markdown_github/load%20image%202-1.png)
+![](contourr_files/figure-gfm/load%20image%202-1.png)<!-- -->
 
 <br>
 
@@ -285,15 +286,14 @@ change them to red as well.
 im2_df$value[im2_df$id %in% m] <- rep(rgbcolor, each = length(m))
 
 im2_new <- as.cimg(im2_df, dim = dim(im2))
-par(mar = c(0,0,0,0))
 plot(im2_new)
 ```
 
-![](contourr_files/figure-markdown_github/recolor%20image%202-1.png)
+![](contourr_files/figure-gfm/recolor%20image%202-1.png)<!-- -->
 
 <br>
 
-Hooray! We’ve successfully found the stake in one image and overlaid it
+Hooray\! We’ve successfully found the stake in one image and overlaid it
 onto a new image. Notice that the stake is now inside the door rather
 than on the floor. All the code does is remember the contour coordinates
 from the reference image and recolor them in the new image. It’s not
@@ -303,12 +303,11 @@ tackling eventually.
 
 <br>
 
-------------------------------------------------------------------------
+-----
 
 <br>
 
-Other Applications
-------------------
+## Other Applications
 
 <br>
 
@@ -319,9 +318,5 @@ away animals are from cameras might be able to overlay a grid onto
 images. Or, someone who was interested in measuring the animals
 themselves might be able to use a similar method to mine, given that
 they know where the measurements will be valid.
-
-<br>
-
-Happy overlaying!
 
 <br>
