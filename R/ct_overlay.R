@@ -26,8 +26,6 @@ ct_overlay <- function(images,
 
 {
 
-  st <- Sys.time()
-
   ## Load in reference image
 
   im <- imager::load.image(images[1])
@@ -64,6 +62,11 @@ ct_overlay <- function(images,
   } # End of regions
 
   roi <- distinct(roi)
+
+
+  ## Track time
+
+  st <- Sys.time()
 
 
 

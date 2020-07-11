@@ -26,7 +26,6 @@ ct_find <- function(image,
 
 {
 
-
   ## Load in the image
 
   im <- imager::load.image(image)
@@ -64,6 +63,9 @@ ct_find <- function(image,
   roi <- distinct(roi)
 
 
+  ## Track time
+
+  st <- Sys.time()
 
   ## Find contours in region of interest
 
@@ -106,6 +108,7 @@ ct_find <- function(image,
 
   } # End of save == TRUE
 
+  Sys.time() - st
 
 } # End of function
 
