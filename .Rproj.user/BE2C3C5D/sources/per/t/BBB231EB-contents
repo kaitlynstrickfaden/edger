@@ -110,7 +110,7 @@ A contour is just an edge in an image; the `imgradient` function in `imager` com
 <br>
 
 ```{r xy contours}
-par(mar = c(.1,.1,.1,.1))
+par(mar = c(1,.1,1,.1))
 im1_xy <- imgradient(grayscale(im1), "xy")
 plot(im1_xy, layout = "row", axes = F)
 ```
@@ -163,8 +163,8 @@ And then filter out the pixels outside of this box so R isn't dealing with so mu
 
 ```{r filter 1}
 roi <- filter(im1_bw,
-                   x >= im_c[1] & x <= im_c[3] &
-                     y >= im_c[2] & y <= im_c[4])
+              im1_bw$x >= im_c[1] & im1_bw$x <= im_c[3] &
+              im1_bw$y >= im_c[2] & im1_bw$y <= im_c[4])
 ```
 
 <br>
@@ -262,9 +262,6 @@ This package, or at least this methodology, will likely be useful for many camer
 
 <br>
 
-Happy overlaying!
-
-<br>
 
 
 

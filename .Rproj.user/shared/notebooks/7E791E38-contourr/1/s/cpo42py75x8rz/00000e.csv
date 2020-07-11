@@ -1,4 +1,0 @@
-"0","im1 <- load.image(""../images/image01.jpg"")"
-"0","im1_df <- as.data.frame(im1)"
-"0","im1_df$id <- rep(1:(dim(im1)[1] * dim(im1)[2]), times = 3)"
-"0","plot(im1)"
