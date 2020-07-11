@@ -1,2 +1,0 @@
-"0","im_new <- as.cimg(im1_df, dim = dim(im1)) "
-"0","plot(im_new, axes = F)"

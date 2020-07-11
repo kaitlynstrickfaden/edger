@@ -1,4 +1,0 @@
-"0","im2 <- load.image(""../images/image02.jpg"")"
-"0","im2_df <-as.data.frame(im2) "
-"0","im2_df$id <- 1:length(im1_bw$x)"
-"0","plot(im2, axes = F)"

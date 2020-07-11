@@ -1,6 +1,0 @@
-"0","## Recolor contour pixels in full image"
-"0",""
-"0","im2_df$value[im2_df$id %in% m] <- rep(rgbcolor, each = length(m))"
-"0",""
-"0","im2_new <- as.cimg(im2_df, dim = dim(im2))"
-"0","plot(im2_new)"

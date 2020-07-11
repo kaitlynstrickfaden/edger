@@ -1,2 +1,0 @@
-"0","im2 <- load.image(""../images/image02.jpg"")"
-"0","plot(im2, axes = F)"
