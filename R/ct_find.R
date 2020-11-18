@@ -9,12 +9,12 @@
 #' @import dplyr
 #' @import grDevices
 #' @import imager
-#' @param image The name of the input image.
-#' @param contourvalue The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.
+#' @param image The file path to the image to be analyzed.
+#' @param contourvalue A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.
 #' @param color A character string for the color of the superimposed object. Default is red.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
 #' @param save Logical. Save the output image. Default is FALSE.
-#' @return A recolored image. If save == TRUE, saves recolored image to a "contourr_images" directory in your working directory.
+#' @return A recolored image. If save == TRUE, saves recolored image to working directory with "_contourr" appended to the original name.
 #' @export
 
 
@@ -33,7 +33,7 @@ ct_find <- function(image,
 
   ## Manipulate image for finding contours & make into df
 
-  im_bw <- as.data.frame(enorm(imgradient(grayscale(im),"xy")))
+  im_bw <- as.data.frame(imager::enorm(imager::imgradient(imager::grayscale(im),"xy")))
 
   ## Assign unique pixel values for indexing
 
@@ -42,17 +42,17 @@ ct_find <- function(image,
 
   ## Find RGB value of selected color
 
-  rgbcolor <- as.vector(col2rgb(color)/255)
+  rgbcolor <- as.vector(grDevices::col2rgb(color)/255)
 
   ## Define region of interest
 
   roi <- NULL
 
-  for (i in 1:regions){
+  for (i in 1:regions) {
 
-    im_roi <- grabRect(im, output = "coord")
+    im_roi <- imager::grabRect(im, output = "coord")
 
-    roi2 <- filter(im_bw,
+    roi2 <- dplyr::filter(im_bw,
                    im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
                    im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
 
@@ -60,7 +60,7 @@ ct_find <- function(image,
 
   } # End of regions
 
-  roi <- distinct(roi)
+  roi <- dplyr::distinct(roi)
 
 
   ## Track time
@@ -83,16 +83,14 @@ ct_find <- function(image,
 
   ## Display the new image
 
-  im <- as.cimg(im_df, dim = dim(im))
+  im <- imager::as.cimg(im_df, dim = dim(im))
   par(mar = c(0,0,0,0))
   plot(im)
 
 
   ## Save new image if save == TRUE
 
-  if (save == TRUE){
-
-    #dir.create("contourr_images")
+  if (save == TRUE) {
 
     image_split <- stringr::str_split(image, "\\.")[[1]]
 
@@ -101,7 +99,7 @@ ct_find <- function(image,
     image_name <- paste(image_split[1], "_contourr.", image_end, sep = "")
 
 
-    jpeg(image_name, width = dim(im)[1], height = dim(im)[2])
+    grDevices::jpeg(image_name, width = dim(im)[1], height = dim(im)[2])
     par(mar = c(0,0,0,0))
     plot(im)
     dev.off()

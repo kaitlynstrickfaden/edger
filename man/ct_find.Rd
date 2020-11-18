@@ -7,9 +7,9 @@
 ct_find(image, contourvalue = 0.1, color = "red", regions = 1, save = FALSE)
 }
 \arguments{
-\item{image}{The name of the input image.}
+\item{image}{The file path to the image to be analyzed.}
 
-\item{contourvalue}{The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.}
+\item{contourvalue}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
 
@@ -18,7 +18,7 @@ ct_find(image, contourvalue = 0.1, color = "red", regions = 1, save = FALSE)
 \item{save}{Logical. Save the output image. Default is FALSE.}
 }
 \value{
-A recolored image. If save == TRUE, saves recolored image to a "contourr_images" directory in your working directory.
+A recolored image. If save == TRUE, saves recolored image to working directory with "_contourr" appended to the original name.
 }
 \description{
 Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.

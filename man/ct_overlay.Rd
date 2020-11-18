@@ -7,16 +7,16 @@
 ct_overlay(images, contourvalue = 0.1, color = "red", regions = 1)
 }
 \arguments{
-\item{images}{A vector containing image paths. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.}
+\item{images}{A vector containing file paths of images to be analyzed. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.}
 
-\item{contourvalue}{The minimum pixel value you want to keep (a low contour value captures weaker contrasts). Default is 0.1.}
+\item{contourvalue}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
 
 \item{regions}{A numeric indicating how many regions to draw. Default is 1.}
 }
 \value{
-Recolored images. Saves recolored images to a "contourr_images" directory in your working directory.
+Recolored images. Saves recolored images to working directory with "_contourr" appended to the original name.
 }
 \description{
 Find pixel coordinates of contours in defined regions of a reference image. Then, find and recolor the same pixels in new images.
