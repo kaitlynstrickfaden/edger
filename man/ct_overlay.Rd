@@ -4,7 +4,13 @@
 \alias{ct_overlay}
 \title{Overlay Contours Onto Images}
 \usage{
-ct_overlay(images, contourvalue = 0.1, color = "red", regions = 1)
+ct_overlay(
+  images,
+  contourvalue = 0.1,
+  color = "red",
+  regions = 1,
+  show_image = TRUE
+)
 }
 \arguments{
 \item{images}{A vector containing file paths of images to be analyzed. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.}
@@ -14,6 +20,8 @@ ct_overlay(images, contourvalue = 0.1, color = "red", regions = 1)
 \item{color}{A character string for the color of the superimposed object. Default is red.}
 
 \item{regions}{A numeric indicating how many regions to draw. Default is 1.}
+
+\item{show_image}{Logical. Plot images as they are recolored. Default is TRUE.}
 }
 \value{
 Recolored images. Saves recolored images to working directory with "_contourr" appended to the original name.

@@ -20,6 +20,7 @@ Imports:
     graphics,
     grDevices,
     imager,
+    progress,
     stringr
 RoxygenNote: 7.1.1
 Suggests: 
