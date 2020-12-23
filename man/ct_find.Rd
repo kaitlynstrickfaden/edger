@@ -2,7 +2,7 @@
 % Please edit documentation in R/ct_find.R
 \name{ct_find}
 \alias{ct_find}
-\title{Find and Highlight Contours}
+\title{Find and Recolor Contours in a Single Image}
 \usage{
 ct_find(image, contourvalue = 0.1, color = "red", regions = 1, save = FALSE)
 }

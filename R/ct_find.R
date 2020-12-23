@@ -1,6 +1,6 @@
 
 
-#' Find and Highlight Contours
+#' Find and Recolor Contours in a Single Image
 #'
 #' Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.
 #'
