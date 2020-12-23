@@ -27,7 +27,7 @@ ct_cvdf <- function(imagepaths) {
   }
 
   if (is.vector(imagepaths) == FALSE & is.data.frame(imagepaths) == FALSE) {
-    stop("'images' must be a vector or data frame object")
+    stop("'imagepaths' must be a vector or data frame object")
   }
 
   if ("File" %in% colnames(d) == F) {
