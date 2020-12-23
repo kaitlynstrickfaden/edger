@@ -7,7 +7,7 @@ This package relies heavily on the package `imager`. The webpage for `imager` ca
 
 ```
 
-install_packages(c("devtools", "dplyr", "imager", "stringr"))
+install.packages(c("devtools", "dplyr", "imager", "stringr"))
 
 ```
 
@@ -22,9 +22,10 @@ library(contourr)
 
 ## Functions
 
-For now, this package contains just two functions:
+For now, this package contains three functions:
 
 * `ct_find`: a function for finding and highlighting contours in a single image, with the option to save the recolored image. The main purpose of this function is for the user to tinker with contour values to find the one best suited to their image.
+* `ct_cvdf`: a user interface to help you find the right contour values for multiple images and then save those contour values in a data frame.
 * `ct_overlay`: a function for applying contour lines to a new set of images. This function builds on the `ct_find` function by applying the same recolored pixels to a new set of images. It also saves the recolored images.
 
 For a detailed description of the methodology behind the functions, refer to the `contourr` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr.md).
