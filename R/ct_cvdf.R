@@ -1,9 +1,10 @@
 
 #' Find Contour Values for Several Images
 #'
-#' A user interface for locating pixels corresponding to edges in multiple photos. If the default contour value (0.1) is not satisfactory, input "N" when prompted to input a new contour value and redisplay. Repeat as necessary until it is satisfactory, then input "Y". The selected contour value will be saved to a data frame.
+#' An interactive function for locating pixels corresponding to edges in multiple photos. If the default contour value (0.1) does not display desired contours, input "N" when prompted to input a new contour value and redisplay. Repeat as necessary until it is satisfactory, then input "Y". The selected contour value(s) will be saved to a data frame.
 #'
 #' @importFrom graphics par plot
+#' @importFrom stringr str_glue
 #' @import dplyr
 #' @import grDevices
 #' @import imager
@@ -18,21 +19,30 @@ ct_cvdf <- function(imagepaths) {
 
 
   if (is.vector(imagepaths)) {
+    for (i in seq_along(imagepaths)) {
+      if (file.exists(imagepaths[i]) == FALSE) {
+        stop(str_glue("imagepaths[", i, "] is not a valid path.", sep = "")) }
+    }
     d <- data.frame(File = imagepaths, CV = 0)
   }
 
+
   if (is.data.frame(imagepaths)) {
     d <- imagepaths
+    if ("File" %in% colnames(d) == FALSE) {
+      stop("input data frame must contain a column called 'File'") }
+    for (i in seq_along(d$File)) {
+      if (file.exists(d$File[i]) == FALSE) {
+        stop(str_glue("imagepaths$File[", i, "] is not a valid path", sep = "")) }
+    }
     d$CV <- 0
   }
+
 
   if (is.vector(imagepaths) == FALSE & is.data.frame(imagepaths) == FALSE) {
     stop("'imagepaths' must be a vector or data frame object")
   }
 
-  if ("File" %in% colnames(d) == F) {
-    stop("input data frame must contain a column called 'File'")
-  }
 
 
   for (i in seq_along(d$File)) {
@@ -67,8 +77,6 @@ ct_cvdf <- function(imagepaths) {
   return(d)
 
 } # end of function
-
-
 
 
 
