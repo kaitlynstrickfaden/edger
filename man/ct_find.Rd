@@ -4,12 +4,12 @@
 \alias{ct_find}
 \title{Find and Recolor Contours in a Single Image}
 \usage{
-ct_find(image, contourvalue = 0.1, color = "red", regions = 1, save = FALSE)
+ct_find(image, contour_value = 0.1, color = "red", regions = 1, save = FALSE)
 }
 \arguments{
 \item{image}{The file path to the image to be analyzed.}
 
-\item{contourvalue}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
+\item{contour_value}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
 

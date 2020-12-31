@@ -51,7 +51,7 @@ ct_cvdf <- function(imagepaths) {
     refimage <- d$File[i]
     cv <- .1
 
-    ct_find(refimage, contourvalue = cv)
+    ct_find(refimage, contour_value = cv)
 
     while (done == FALSE) {
 
@@ -66,7 +66,7 @@ ct_cvdf <- function(imagepaths) {
 
       if (x != "Y") {
         cv <- as.numeric(readline(prompt = "Input new contour value: "))
-        ct_find(refimage, contourvalue = cv)
+        ct_find(refimage, contour_value = cv)
         done <- FALSE
       }
 

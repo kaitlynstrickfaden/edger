@@ -6,20 +6,26 @@
 \usage{
 ct_overlay(
   images,
-  contourvalue = 0.1,
+  contour_value = 0.1,
   color = "red",
   regions = 1,
+  ref_images = 1,
+  shift = c(0, 0),
   show_image = TRUE
 )
 }
 \arguments{
 \item{images}{A vector containing file paths of images to be analyzed. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.}
 
-\item{contourvalue}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
+\item{contour_value}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
 
 \item{regions}{A numeric indicating how many regions to draw. Default is 1.}
+
+\item{ref_images}{A numeric indicating how many reference images in which you want to search for contours. Default is 1. When greater than 1, the first n images will be used.}
+
+\item{shift}{A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down.}
 
 \item{show_image}{Logical. Plot images as they are recolored. Default is TRUE.}
 }

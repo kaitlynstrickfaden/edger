@@ -5,12 +5,12 @@
 #' Define a rectangular region and locate pixels with contour value greater than the one defined within the function. Then, recolor pixels and display recolored image.
 #'
 #' @importFrom graphics par plot
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split str_flatten
 #' @import dplyr
 #' @import grDevices
 #' @import imager
 #' @param image The file path to the image to be analyzed.
-#' @param contourvalue A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.
+#' @param contour_value A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.
 #' @param color A character string for the color of the superimposed object. Default is red.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
 #' @param save Logical. Save the output image. Default is FALSE.
@@ -19,7 +19,7 @@
 
 
 ct_find <- function(image,
-                    contourvalue = 0.1,
+                    contour_value = 0.1,
                     color = "red",
                     regions = 1,
                     save = FALSE)
@@ -69,7 +69,7 @@ ct_find <- function(image,
 
   ## Find contours in region of interest
 
-  roi_c <- roi[roi$value >= contourvalue,]
+  roi_c <- roi[roi$value >= contour_value,]
 
   ## Match contour pixels in full image
 
@@ -93,10 +93,9 @@ ct_find <- function(image,
   if (save == TRUE) {
 
     image_split <- stringr::str_split(image, "\\.")[[1]]
-
+    image_start <- str_flatten(image_split[c(1:length(image_split) - 1)], collapse = ".")
     image_end <- image_split[length(image_split)]
-
-    image_name <- paste(image_split[1], "_contourr.", image_end, sep = "")
+    image_name <- paste(image_start, "_contourr.", image_end, sep = "")
 
 
     grDevices::jpeg(image_name, width = dim(im)[1], height = dim(im)[2])

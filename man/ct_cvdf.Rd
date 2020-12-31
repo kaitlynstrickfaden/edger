@@ -13,5 +13,5 @@ ct_cvdf(imagepaths)
 A data frame containing the file paths and selected contour values.
 }
 \description{
-An interactive function for locating pixels corresponding to edges in multiple photos. If the default contour value (0.1) is not satisfactory, input "N" when prompted to input a new contour value and redisplay. Repeat as necessary until it is satisfactory, then input "Y". The selected contour value(s) will be saved to a data frame.
+An interactive function for locating pixels corresponding to edges in multiple photos. If the default contour value (0.1) does not display desired contours, input "N" when prompted to input a new contour value and redisplay. Repeat as necessary until it is satisfactory, then input "Y". The selected contour value(s) will be saved to a data frame.
 }
