@@ -80,7 +80,7 @@ ct_overlay <- function(images,
   ## Progress Bar
 
   pb <- progress_bar$new(
-    format = " recoloring images  [:bar]  :percent  elapsed: :elapsed",
+    format = " recoloring image :current of :total  [:bar]  :percent  elapsed: :elapsedfull",
     total = length(images), clear = FALSE, width = 80)
 
 
