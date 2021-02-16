@@ -34,9 +34,10 @@ The `contourr` package provides a simple method for extracting the outlines of a
 
 <br>
 
-Right now, this package includes two functions:
+Right now, this package includes three functions:
 
 - `ct_find`: find and recolor outlines in just one image, with the option to save the output image. Useful for tinkering with contour values until you find the right one for your image.
+- `ct_cvdf`: an interactive function to help you find the right contour values for multiple images and then save those contour values in a data frame.
 - `ct_overlay`: find and recolor outlines in one image, then overlay those outlines onto a set of other images.
 
 <br>
@@ -152,9 +153,9 @@ The package will allow you to draw in a region of interest using the "grabRect" 
 
 ```{r rectangle grab}
 #im_c <- grabRect(im1, output = "coord") # draw a box around the object of interest
-im_c <- c(187,30,202,229)
+im_c <- c(316,47,389,713)
 plot(im1, axes = F)
-rect(im_c[1], im_c[2], im_c[3], im_c[4], border = "red")
+rect(im_c[1], im_c[2], im_c[3], im_c[4], border = "cyan1")
 ```
 
 <br>
@@ -169,7 +170,7 @@ roi <- filter(im1_bw,
 
 <br>
 
-`ct_find` and `ct_overlay` both allow you to set the number of regions so you can define several regions of interest if you need.
+`ct_find` and `ct_overlay` both allow you to set the number of regions so you can define several regions of interest if you need. `ct_overlay` even lets you find regions in multiple images!
 
 <br>
 
@@ -188,15 +189,15 @@ This next code chunk will find the coordinates of the contours in the contour im
 ```{r recolor image 1}
 ## Find contours in region of interest
 
-roi_c <- roi[roi$value >= .1,]
+roi_cv <- roi[roi$value >= .1,]
 
 ## Find contour pixels in full image
 
-m <- im1_df$id[match(roi_c$id, im1_df$id)]
+m <- im1_df$id[match(roi_cv$id, im1_df$id)]
 
 ## Recolor contour pixels in full image
 
-rgbcolor <- col2rgb("red")/255
+rgbcolor <- col2rgb("cyan1")/255
 
 im1_df$value[im1_df$id %in% m] <- rep(rgbcolor, each = length(m))
 ```
@@ -214,41 +215,112 @@ plot(im1_new, axes = F)
 
 <br>
 
-Now we have the original image with the contours of the snowstake highlighted. We also know the coordinates of those pixels.  But this itself is not that useful; we already know where the stake is in this photo. Let's apply this to a new photo.
+Now we have the original image with the contours of the measuring stake highlighted. We also know the coordinates of those pixels. Let's have `contourr` shift the recolored pixels over so we can draw a second measuring stake onto our original image.
 
 <br>
 
-We'll load in a second image:
-
-<br>
-
-```{r load image 2}
+```{r load image 2, echo = F}
 im2 <- load.image("../images/image02.jpg")
-im2_df <-as.data.frame(im2) 
+im2_df <- as.data.frame(im2) 
 im2_df$id <- 1:length(im1_bw$x)
 plot(im2, axes = F)
 ```
 
 <br>
 
-Then we'll ask R to find the pixel coordinates in the second photo and change them to red as well.
+You can input a vector with two values, the first being the shift on the x-plane and the second being the shift on the y-plane. Let's have `contourr` shift the snow stake 300 pixels to the right.
 
 <br>
 
-```{r recolor image 2}
+```{r recolor set shift}
+
+shift <- c(300,0)  
+
+```
+
+```{r recolor image 2, echo = F}
 ## Recolor contour pixels in full image
 
+x_shift <- shift[1]
+y_shift <- -shift[2]
+
+  m_df <- im2_df[match(roi_cv$id, im2_df$id),]
+  m_df$keep <- "Y"
+
+  for (i in seq_along(m_df$id)) {
+
+    if (m_df$x[i] + x_shift > dim(im2)[1]) {
+      m_df$keep[i] <- "N" }
+    if (m_df$x[i] + x_shift < 0) {
+      m_df$keep[i] <- "N" }
+    if (m_df$y[i] + y_shift > dim(im2)[2]) {
+      m_df$keep[i] <- "N" }
+    if (m_df$y[i] + y_shift < 0) {
+      m_df$keep[i] <- "N" }
+
+  }
+
+  m <- m_df$id[m_df$keep == "Y"] + x_shift + (y_shift * dim(im2)[2])
+  
 im2_df$value[im2_df$id %in% m] <- rep(rgbcolor, each = length(m))
 
 im2_new <- as.cimg(im2_df, dim = dim(im2))
-plot(im2_new)
+plot(im2_new, axes = F)
 ```
 
 <br>
 
-Hooray! We've successfully found the stake in one image and overlaid it onto a new image. Notice that the stake is now inside the door rather than on the floor. All the code does is remember the contour coordinates from the reference image and recolor them in the new image. It's not smart enough (yet) to adjust the location of the stake if the camera viewshed changes. Camera movement and tilting are issues I plan on tackling eventually.
+Cool! Now we've drawn a measuring stake next to the real one. Of course, you don't have to do any shifting at all if you don't need to; the default is to draw the virtual measuring stake in exactly the same position as it was in that first image. But this option makes it possible for the user to move the virtual measuring stake in case the camera viewshed changes during deployment. 
 
 <br>
+
+So what happens if the image you have doesn't jave ideal lighting conditions?
+
+```{r load image 3, echo = F}
+im3 <- load.image("../images/image03.jpg")
+im3_df <- as.data.frame(im3) 
+im3_df$id <- 1:length(im1_bw$x)
+plot(im3, axes = F)
+```
+
+```{r contour image 3, echo = F}
+im3_gr <- enorm(imgradient(grayscale(im3),"xy"))
+im3_bw <- as.data.frame(im3_gr)
+im3_bw$id <- 1:length(im3_bw$x) 
+
+roi <- filter(im3_bw,
+              im3_bw$x >= im_c[1] & im3_bw$x <= im_c[3] &
+              im3_bw$y >= im_c[2] & im3_bw$y <= im_c[4])
+
+roi_cv <- roi[roi$value >= .05,]
+
+m_df <- im3_df[match(roi_cv$id, im3_df$id),]
+m_df$keep <- "Y"
+
+for (i in seq_along(m_df$id)) {
+
+  if (m_df$x[i] + x_shift > dim(im3)[1]) {
+    m_df$keep[i] <- "N" }
+  if (m_df$x[i] + x_shift < 0) {
+    m_df$keep[i] <- "N" }
+  if (m_df$y[i] + y_shift > dim(im3)[2]) {
+    m_df$keep[i] <- "N" }
+  if (m_df$y[i] + y_shift < 0) {
+    m_df$keep[i] <- "N" }
+
+}
+
+m <- m_df$id[m_df$keep == "Y"] + x_shift + (y_shift * dim(im3)[2])
+  
+im3_df$value[im3_df$id %in% m] <- rep(rgbcolor, each = length(m))
+
+im3_new <- as.cimg(im3_df, dim = dim(im3))
+plot(im3_new, axes = F)
+
+```
+<br>
+
+When the image is over- or under-exposed, you'll probably have a much harder time finding a threshold value that gives you good results.
 
 ---
 
@@ -258,7 +330,7 @@ Hooray! We've successfully found the stake in one image and overlaid it onto a n
 
 <br>
 
-This package, or at least this methodology, will likely be useful for many camera applications which require some reference object. For instance, someone who was interested in being able to measure how far away animals are from cameras might be able to overlay a grid onto images. Or, someone who was interested in measuring the animals themselves might be able to use a similar method to mine, given that they know where the measurements will be valid.
+This package, or at least this methodology, will likely be useful for many camera applications which require some reference object. For instance, someone who was interested in being able to measure how far away animals are from cameras might be able to overlay a grid onto images. Or, someone who was interested in measuring the animals themselves might be able to use a similar method to mine.
 
 <br>
 
