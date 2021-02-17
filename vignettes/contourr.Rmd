@@ -42,7 +42,7 @@ Right now, this package includes three functions:
 
 <br>
 
-It's really important that the object you want to extract contrasts with the background. If the image is overexposed or underexposed, or if the object is a similar color to the background, the method described below won't work.
+It's really important that the object you want to extract contrasts with the background. If the image is overexposed or underexposed, or if the object is a similar color to the background, the method described below won't work quite as well.
 
 <br>
 
@@ -71,7 +71,7 @@ plot(im1)
 
 <br>
 
-A color image is the combined result of three layers of pixels, one layer each for red, green, and blue shades, which are plotted below for reference. R "plots" an image by assigning a combination of red, green, and blue values to each pixel coordinate, with indexing starting in the upper left-hand corner. This image is 384 pixels wide and 256 pixels high.
+A color image is the combined result of three layers of pixels, one layer each for red, green, and blue shades, which are plotted below for reference. R "plots" an image by assigning a combination of red, green, and blue values to each pixel coordinate, with indexing starting in the upper left-hand corner. This image is 1040 pixels wide and 790 pixels high.
 
 <br>
 
@@ -131,7 +131,11 @@ plot(im1_gr, axes = F)
 
 <br>
 
-This is the image upon which this methodology stands. Love it, respect it, cherish it. Also, save it as a data frame, because we'll need it later.
+This is the image upon which this methodology stands. Love it, respect it, cherish it. 
+
+<br>
+
+We'll also save it as a data frame, because we'll need it later.
 
 <br>
 
@@ -178,7 +182,7 @@ roi <- filter(im1_bw,
 
 <br>
 
-## Highlight the Contours in An Image 
+## Highlight the Contours in an Image 
 
 <br>
 
@@ -274,7 +278,7 @@ Cool! Now we've drawn a measuring stake next to the real one. Of course, you don
 
 <br>
 
-So what happens if the image you have doesn't jave ideal lighting conditions?
+So what happens if the image you have doesn't have ideal lighting conditions?
 
 ```{r load image 3, echo = F}
 im3 <- load.image("../images/image03.jpg")

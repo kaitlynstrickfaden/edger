@@ -1,7 +1,7 @@
 contourr
 ================
 Kaitlyn Strickfaden
-2021-02-16
+2021-02-17
 
 <br>
 
@@ -32,7 +32,7 @@ Right now, this package includes three functions:
 It’s really important that the object you want to extract contrasts with
 the background. If the image is overexposed or underexposed, or if the
 object is a similar color to the background, the method described below
-won’t work.
+won’t work quite as well.
 
 <br>
 
@@ -72,7 +72,7 @@ A color image is the combined result of three layers of pixels, one
 layer each for red, green, and blue shades, which are plotted below for
 reference. R “plots” an image by assigning a combination of red, green,
 and blue values to each pixel coordinate, with indexing starting in the
-upper left-hand corner. This image is 384 pixels wide and 256 pixels
+upper left-hand corner. This image is 1040 pixels wide and 790 pixels
 high.
 
 <br>
@@ -157,8 +157,11 @@ plot(im1_gr, axes = F)
 <br>
 
 This is the image upon which this methodology stands. Love it, respect
-it, cherish it. Also, save it as a data frame, because we’ll need it
-later.
+it, cherish it.
+
+<br>
+
+We’ll also save it as a data frame, because we’ll need it later.
 
 <br>
 
@@ -215,7 +218,7 @@ even lets you find regions in multiple images\!
 
 <br>
 
-## Highlight the Contours in An Image
+## Highlight the Contours in an Image
 
 <br>
 
@@ -292,7 +295,7 @@ camera viewshed changes during deployment.
 
 <br>
 
-So what happens if the image you have doesn’t jave ideal lighting
+So what happens if the image you have doesn’t have ideal lighting
 conditions?
 
 ![](contourr_files/figure-gfm/load%20image%203-1.png)<!-- -->
