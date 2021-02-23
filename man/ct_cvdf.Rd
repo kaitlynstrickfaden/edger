@@ -4,10 +4,12 @@
 \alias{ct_cvdf}
 \title{Find Contour Values for Several Images}
 \usage{
-ct_cvdf(imagepaths)
+ct_cvdf(imagepaths, color = "red")
 }
 \arguments{
 \item{imagepaths}{A vector or data frame object containing the file paths to the images for analysis. If inputting a data frame, the data frame can have other columns if desired, but the file paths must be in a column called "File".}
+
+\item{color}{A character string for the color of the superimposed object. Default is red.}
 }
 \value{
 A data frame containing the file paths and selected contour values.

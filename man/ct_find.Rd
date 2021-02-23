@@ -4,10 +4,19 @@
 \alias{ct_find}
 \title{Find and Recolor Contours in a Single Image}
 \usage{
-ct_find(image, contour_value = 0.1, color = "red", regions = 1, save = FALSE)
+ct_find(
+  image,
+  roi_in = NULL,
+  contour_value = 0.1,
+  color = "red",
+  regions = 1,
+  save = FALSE
+)
 }
 \arguments{
 \item{image}{The file path to the image to be analyzed.}
+
+\item{roi_in}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL input should be a 4-column data frame with a number of rows equal to regions. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.}
 
 \item{contour_value}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
 
