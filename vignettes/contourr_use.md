@@ -105,7 +105,7 @@ contourr::ct_find(im1)
 
 ![](contourr_use_files/figure-gfm/ct_find%20function%20edited%20for%20Markdown%201-1.png)<!-- -->
 
-    #> Time difference of 2.62 secs
+    #> Time difference of 2.86 secs
 
 <br>
 
@@ -129,7 +129,7 @@ roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
 contourr::ct_find(im1, roi_in = roi1, contour_value = 0.07, color = "cyan1")
 ```
 
-    #> Time difference of 2.13 secs
+    #> Time difference of 2.36 secs
 
 ![](contourr_use_files/figure-gfm/ct_find%20function%20edited%20for%20Markdown%202-1.png)<!-- -->
 
@@ -153,7 +153,7 @@ contourr::ct_find(im1, roi_in = rbind(roi1, roi2), regions = 2, color = "purple"
 
 ![](contourr_use_files/figure-gfm/ct_find%20function%20edited%20for%20Markdown%203-1.png)<!-- -->
 
-    #> Time difference of 2.3 secs
+    #> Time difference of 2.69 secs
 
 <br>
 
@@ -283,8 +283,7 @@ contourr::ct_overlay(c(im1, im2), roi_in = roi1, color = "green1")
 This function comes with a progress bar, courtesy of the `progress`
 package. The progress bar tells the user which image the function is
 currently recoloring, how many total images it has to recolor, a percent
-completion, and an elapsed time. It doesn’t display on the vignette, but
-it will display in the console of the user’s R session.
+completion, and an elapsed time.
 
 <br>
 
@@ -303,7 +302,7 @@ contourr::ct_overlay(c(im1, im2), roi_in = roi1,
 
 ![](contourr_use_files/figure-gfm/ct_overlay%20function%20edited%20for%20Markdown%202-1.png)<!-- -->
 
-    #>  recoloring image 2 of 2  [===========================]  100%  elapsed: 00:00:02
+    #>  recoloring image 2 of 2  [===========================]  100%  elapsed: 00:00:03
 
 ![](contourr_use_files/figure-gfm/ct_overlay%20function%20edited%20for%20Markdown%202-2.png)<!-- -->
 

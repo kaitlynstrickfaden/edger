@@ -509,7 +509,7 @@ ct_overlay1(c(im1, im2), roi_in = roi1, color = "green1")
 
 <br>
 
-This function comes with a progress bar, courtesy of the `progress` package. The progress bar tells the user which image the function is currently recoloring, how many total images it has to recolor, a percent completion, and an elapsed time. It doesn't display on the vignette, but it will display in the console of the user's R session.
+This function comes with a progress bar, courtesy of the `progress` package. The progress bar tells the user which image the function is currently recoloring, how many total images it has to recolor, a percent completion, and an elapsed time.
 
 <br>
 
