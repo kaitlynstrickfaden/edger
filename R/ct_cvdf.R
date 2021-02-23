@@ -50,7 +50,7 @@ ct_cvdf <- function(imagepaths, color = "red") {
     done <- FALSE
     refimage <- d$File[i]
     cv <- .1
-    roi_in <- grabRect(refimage, output = "coord")
+    roi_in <- grabRect(imager::load.image(refimage), output = "coord")
     roi_in <- data.frame(roi_in[1], roi_in[2], roi_in[3], roi_in[4])
 
     ct_find(refimage, roi_in = roi_in, contour_value = cv, color = color)
@@ -79,6 +79,5 @@ ct_cvdf <- function(imagepaths, color = "red") {
   return(d)
 
 } # end of function
-
 
 
