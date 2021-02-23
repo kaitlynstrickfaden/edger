@@ -5,16 +5,17 @@
 #' Find pixel coordinates of contours in defined regions of a reference image. Then, find and recolor the same pixels in new images.
 #'
 #' @importFrom graphics par plot
-#' @importFrom stringr str_split str_flatten
+#' @importFrom stringr str_flatten str_glue str_split
 #' @import dplyr
 #' @import grDevices
 #' @import imager
 #' @import progress
 #' @param images A vector containing file paths of images to be analyzed. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.
+#' @param ref_images A numeric indicating in how many reference images you want to search for contours. Default is 1. When greater than 1, the first n images will be used.
+#' @param roi_in An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL and ref_images = 1, input should be a 4-column data frame with a number of rows equal to regions. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. If "roi_in" is not NULL and ref_images > 1, input should be a list of length ref_images, and each item of the list should be a separate 4-column data frame for the region(s) of interest in each image. Note that plotting of images by "imager" starts in the top-left corner.
 #' @param contour_value A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.
 #' @param color A character string for the color of the superimposed object. Default is red.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
-#' @param ref_images A numeric indicating how many reference images in which you want to search for contours. Default is 1. When greater than 1, the first n images will be used.
 #' @param shift A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down.
 #' @param show_image Logical. Plot images as they are recolored. Default is TRUE.
 #' @return Recolored images. Saves recolored images to working directory with "_contourr" appended to the original name.
@@ -24,14 +25,51 @@
 
 
 ct_overlay <- function(images,
+                       ref_images = 1,
+                       roi_in = NULL,
                        contour_value = .1,
                        color = "red",
                        regions = 1,
-                       ref_images = 1,
                        shift = c(0,0),
                        show_image = TRUE)
 
 {
+
+  # Check if file paths are valid
+  for (i in seq_along(images)) {
+    if (file.exists(images[i]) == FALSE) {
+      stop(str_glue("images[", i, "] is not a valid path.", sep = "")) }
+  }
+
+  # Check if ref_images matches with roi_in
+  if (is.list(roi_in) == TRUE) {
+    if (is.data.frame(roi_in) == TRUE) {
+      if (ref_images != 1) {
+        stop("If roi_in is a data frame object, then ref_images must equal 1.")
+      }
+    }
+    if (is.data.frame(roi_in) == FALSE) {
+      if (ref_images != length(roi_in)) {
+        stop(str_glue("ref_images {ref_images} and length of roi_in {length(roi_in)} do not match."))
+        }
+      }
+  }
+
+  # Check if color is a character
+  if (is.character(color) == FALSE) {
+    stop("color must be a character string.")
+  }
+
+  # Check if shift is a coordinate pair
+  if (is.numeric(shift) == FALSE | length(shift) != 2) {
+    stop("shift must be a numeric vector of length 2.")
+  }
+
+  # Check if contour_value is valid
+  if (contour_value <= 0) {
+    stop("contour_value must be a positive non-zero number.")
+  }
+
 
 
   rgbcolor <- as.vector(grDevices::col2rgb(color)/255)
@@ -57,19 +95,60 @@ ct_overlay <- function(images,
     im_bw$id <- 1:length(im_bw$x)
 
 
-    ## Define region of interest
+    ## Define region of interest if "roi_in" is not set:
 
-    for (i in 1:regions) {
+    if (is.null(roi_in) == TRUE) {
 
-      im_roi <- imager::grabRect(im, output = "coord")
+      for (i in 1:regions) {
 
-      roi2 <- dplyr::filter(im_bw,
-                            im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
-                              im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
+        im_roi <- imager::grabRect(im, output = "coord")
 
-      roi <- rbind(roi, roi2)
+        roi2 <- dplyr::filter(im_bw,
+                              im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                                im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
 
-    } # End of regions
+        roi <- rbind(roi, roi2)
+
+      } # End of regions
+
+    }
+
+
+    ## Define region of interest if "roi_in" is set and ref_images == 1:
+
+    if (is.null(roi_in) == FALSE & ref_images == 1) {
+
+      for (i in 1:regions) {
+
+        im_roi <- as.numeric(roi_in[i,])
+
+        roi2 <- dplyr::filter(im_bw,
+                              im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                                im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
+
+        roi <- rbind(roi, roi2)
+
+      } # End of regions
+
+    }
+
+    ## Define region of interest if "roi_in" is set and ref_images > 1:
+
+    if (is.null(roi_in) == FALSE & ref_images > 1) {
+
+      for (i in 1:regions) {
+
+        im_roi <- as.numeric(roi_in[[j]][i,])
+
+        roi2 <- dplyr::filter(im_bw,
+                              im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                                im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
+
+        roi <- rbind(roi, roi2)
+
+      } # End of regions
+
+    }
 
   } # End of photos
 

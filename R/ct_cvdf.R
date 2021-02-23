@@ -9,13 +9,14 @@
 #' @import grDevices
 #' @import imager
 #' @param imagepaths A vector or data frame object containing the file paths to the images for analysis. If inputting a data frame, the data frame can have other columns if desired, but the file paths must be in a column called "File".
+#' @param color A character string for the color of the superimposed object. Default is red.
 #' @return A data frame containing the file paths and selected contour values.
 #' @export
 
 
 
 
-ct_cvdf <- function(imagepaths) {
+ct_cvdf <- function(imagepaths, color = "red") {
 
 
   if (is.vector(imagepaths)) {
@@ -44,20 +45,21 @@ ct_cvdf <- function(imagepaths) {
   }
 
 
-
   for (i in seq_along(d$File)) {
 
     done <- FALSE
     refimage <- d$File[i]
     cv <- .1
+    roi_in <- grabRect(refimage, output = "coord")
+    roi_in <- data.frame(roi_in[1], roi_in[2], roi_in[3], roi_in[4])
 
-    ct_find(refimage, contour_value = cv)
+    ct_find(refimage, roi_in = roi_in, contour_value = cv, color = color)
 
     while (done == FALSE) {
 
       interactive()
 
-      x <- readline(prompt = "Done? Input Y for yes or N for no: ")
+      x <- readline(prompt = "Is this a good contour value? Input Y for yes or N for no: ")
 
       if (x == "Y") {
         d[i,"CV"] <- cv
@@ -66,7 +68,7 @@ ct_cvdf <- function(imagepaths) {
 
       if (x != "Y") {
         cv <- as.numeric(readline(prompt = "Input new contour value: "))
-        ct_find(refimage, contour_value = cv)
+        ct_find(refimage, roi_in = roi_in, contour_value = cv, color = color)
         done <- FALSE
       }
 
