@@ -1,7 +1,7 @@
-contourr
+contourr\_methodology
 ================
 Kaitlyn Strickfaden
-2021-02-17
+2021-02-23
 
 <br>
 
@@ -12,20 +12,9 @@ Kaitlyn Strickfaden
 The `contourr` package provides a simple method for extracting the
 outlines of an object of interest in one image and overlaying the same
 outlines onto new images. This vignette is a step-by-step description of
-the methodology.
-
-<br>
-
-Right now, this package includes three functions:
-
-  - `ct_find`: find and recolor outlines in just one image, with the
-    option to save the output image. Useful for tinkering with contour
-    values until you find the right one for your image.
-  - `ct_cvdf`: an interactive function to help you find the right
-    contour values for multiple images and then save those contour
-    values in a data frame.
-  - `ct_overlay`: find and recolor outlines in one image, then overlay
-    those outlines onto a set of other images.
+the methodology. For a detailed description of the functions available
+in the package right now, refer to the `contourr` use
+[vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr_use.md).
 
 <br>
 
@@ -52,7 +41,7 @@ computing power.
 <br>
 
 Let’s take a look at an image using `imager`’s “load.image” function.
-I’ll also convert it into a dataframe and give each pixel a unique
+I’ll also convert it into a data frame and give each pixel a unique
 index to make it easier to manipulate later.
 
 <br>
@@ -64,7 +53,7 @@ im1_df$id <- rep(1:(dim(im1)[1] * dim(im1)[2]), times = 3)
 plot(im1)
 ```
 
-![](contourr_files/figure-gfm/load%20image%201-1.png)<!-- -->
+![](contourr_methodology_files/figure-gfm/load%20image%201-1.png)<!-- -->
 
 <br>
 
@@ -93,12 +82,13 @@ plot(green, axes = F)
 plot(blue, axes = F)
 ```
 
-![](contourr_files/figure-gfm/rgb%20image-1.png)<!-- --> <br>
+![](contourr_methodology_files/figure-gfm/rgb%20image-1.png)<!-- -->
+<br>
 
-Color images can be converted to grayscale. There are about a million
-ways to convert a color image to grayscale, but `imager` converts the
-luminance (brightness) of a pixel into a shade of gray. Let’s see what
-that looks like for our image:
+Color images can be converted to grayscale. There are many ways to
+convert a color image to grayscale, but `imager` converts the luminance
+(brightness) of a pixel into a shade of gray. Let’s see what that looks
+like for our image:
 
 <br>
 
@@ -106,7 +96,7 @@ that looks like for our image:
 plot(grayscale(im1), axes = F)
 ```
 
-![](contourr_files/figure-gfm/grayscale%20image%201-1.png)<!-- -->
+![](contourr_methodology_files/figure-gfm/grayscale%20image%201-1.png)<!-- -->
 
 <br>
 
@@ -120,7 +110,7 @@ A contour is just an edge in an image; the `imgradient` function in
 immediately around it. Greater differences between neighboring pixels
 will give a pixel a larger contour value, while weaker differences will
 give a smaller contour value. Images have x contours and y contours,
-which look like this:
+which, separately, look like this:
 
 <br>
 
@@ -130,18 +120,18 @@ im1_xy <- imgradient(grayscale(im1), "xy")
 plot(im1_xy, layout = "row", axes = F)
 ```
 
-![](contourr_files/figure-gfm/xy%20contours-1.png)<!-- -->
+![](contourr_methodology_files/figure-gfm/xy%20contours-1.png)<!-- -->
 
 <br>
 
 Next, we’ll find the distance between the values in the x contour plot
 and the values in the y contour plot at each pixel coordinate. When
-either x or y are a contour, there is a greater distance between the two
-values. Normalizing these distances lets us give greater weight to
-places in the image where there are contours. `imager` has a function
-called `enorm` which does these calculations for us. When we find the
-distances between the pixels in the x and y contour plots, the result is
-a single image which looks like this:
+either x or y is a contour, there is a greater distance between the x
+and y values at a particular pixel. Normalizing these distances lets us
+give greater weight to places in the image where there are contours.
+`imager` has a function called `enorm` which does these calculations for
+us. When we find the distances between the pixels in the x and y contour
+plots, the result is a single image which looks like this:
 
 <br>
 
@@ -152,7 +142,7 @@ im1_bw$id <- 1:length(im1_bw$x)
 plot(im1_gr, axes = F)
 ```
 
-![](contourr_files/figure-gfm/contour%20image-1.png)<!-- -->
+![](contourr_methodology_files/figure-gfm/contour%20image-1.png)<!-- -->
 
 <br>
 
@@ -181,8 +171,9 @@ lets us limit our search for contours to just a region we care about.
 
 <br>
 
-The package will allow you to draw in a region of interest using the
-“grabRect” function. I define my region of interest…
+The package will allow you to either draw in a region of interest using
+the “grabRect” function or define a region of interest in th call to the
+functions. I define my region of interest…
 
 <br>
 
@@ -193,7 +184,7 @@ plot(im1, axes = F)
 rect(im_c[1], im_c[2], im_c[3], im_c[4], border = "cyan1")
 ```
 
-![](contourr_files/figure-gfm/rectangle%20grab-1.png)<!-- -->
+![](contourr_methodology_files/figure-gfm/rectangle%20grab-1.png)<!-- -->
 
 <br>
 
@@ -210,7 +201,7 @@ roi <- filter(im1_bw,
 
 `ct_find` and `ct_overlay` both allow you to set the number of regions
 so you can define several regions of interest if you need. `ct_overlay`
-even lets you find regions in multiple images\!
+even lets you define regions in multiple images\!
 
 <br>
 
@@ -225,7 +216,7 @@ even lets you find regions in multiple images\!
 This next code chunk will find the coordinates of the contours in the
 contour image and recolor them in the original image. You must specify
 some contour value as the minimum threshold to keep. By trial and error,
-I found that 0.1 was a good `contourvalue` for this image.
+I found that 0.1 was a good `contour_value` for this image.
 
 <br>
 
@@ -236,13 +227,13 @@ roi_cv <- roi[roi$value >= .1,]
 
 ## Find contour pixels in full image
 
-m <- im1_df$id[match(roi_cv$id, im1_df$id)]
+m1 <- im1_df$id[match(roi_cv$id, im1_df$id)]
 
 ## Recolor contour pixels in full image
 
 rgbcolor <- col2rgb("cyan1")/255
 
-im1_df$value[im1_df$id %in% m] <- rep(rgbcolor, each = length(m))
+im1_df$value[im1_df$id %in% m1] <- rep(rgbcolor, each = length(m1))
 ```
 
 <br>
@@ -256,54 +247,40 @@ im1_new <- as.cimg(im1_df, dim = dim(im1))
 plot(im1_new, axes = F)
 ```
 
-![](contourr_files/figure-gfm/plot%20recolored%20image%201-1.png)<!-- -->
+![](contourr_methodology_files/figure-gfm/plot%20recolored%20image%201-1.png)<!-- -->
 
 <br>
 
-Now we have the original image with the contours of the measuring stake
-highlighted. We also know the coordinates of those pixels. Let’s have
-`contourr` shift the recolored pixels over so we can draw a second
-measuring stake onto our original image.
-
-<br>
-
-![](contourr_files/figure-gfm/load%20image%202-1.png)<!-- -->
-
-<br>
-
-You can input a vector with two values, the first being the shift on the
-x-plane and the second being the shift on the y-plane. Let’s have
-`contourr` shift the snow stake 300 pixels to the right.
-
-<br>
-
-``` r
-
-shift <- c(300,0)  
-```
-
-![](contourr_files/figure-gfm/recolor%20image%202-1.png)<!-- -->
-
-<br>
-
-Cool\! Now we’ve drawn a measuring stake next to the real one. Of
-course, you don’t have to do any shifting at all if you don’t need to;
-the default is to draw the virtual measuring stake in exactly the same
-position as it was in that first image. But this option makes it
-possible for the user to move the virtual measuring stake in case the
-camera viewshed changes during deployment.
+Cool\! Now we have the original image with the contours of the measuring
+stake highlighted. We also know the coordinates of those pixels. Of
+course, this in itself isn’t all that useful; we already know where the
+measuring stake is in this image. But by extracting contours from this
+image and then saving the coordinates, we can now recolor those same
+pixels in new images.
 
 <br>
 
 So what happens if the image you have doesn’t have ideal lighting
 conditions?
 
-![](contourr_files/figure-gfm/load%20image%203-1.png)<!-- -->
+<br>
 
-![](contourr_files/figure-gfm/contour%20image%203-1.png)<!-- --> <br>
+![](contourr_methodology_files/figure-gfm/load%20image%202-1.png)<!-- -->
+
+![](contourr_methodology_files/figure-gfm/contour%20image%202-1.png)<!-- -->
+<br>
 
 When the image is over- or under-exposed, you’ll probably have a much
 harder time finding a threshold value that gives you good results.
+
+<br>
+
+If we instead use the contours from the first image, then we get much
+better results:
+
+<br>
+
+![](contourr_methodology_files/figure-gfm/recolor%20image%202-1.png)<!-- -->
 
 -----
 
