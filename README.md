@@ -28,7 +28,7 @@ For now, this package contains three functions:
 * `ct_cvdf`: an interactive function to help you find the right contour values for multiple images and then save those contour values in a data frame.
 * `ct_overlay`: a function for applying contour lines to a new set of images. This function builds on the `ct_find` function by applying the same recolored pixels to a new set of images. It also saves the recolored images with "contourr" appended to the original file name.
 
-For a detailed description of the methodology behind the functions, refer to the `contourr` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr.md).
+For a detailed description of the methodology behind the functions, refer to the `contourr_methodology` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr_methodology.md). For a detailed description of the functions in the package, refer to the `contourr_use` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr_use.md). 
 
 ## Important Notes
 
