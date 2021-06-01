@@ -17,10 +17,15 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     dplyr,
+    furrr,
+    future,
     graphics,
     grDevices,
     imager,
+    magrittr,
     progress,
+    purrr,
+    rlang,
     stringr
 RoxygenNote: 7.1.1
 Suggests: 

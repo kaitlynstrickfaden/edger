@@ -239,7 +239,7 @@ ct_find1(im1, roi_in = rbind(roi1, roi2), regions = 2, color = "purple")
 
 ## ct_cvdf
 
-The `ct_cvdf` ("contour value data frame") function is an extension of the `ct_find` function. Rather than input just a single file path, the user can input a vector containing paths to multiple images to the `imagepaths` argument. Just like the `ct_find` function, the `ct_cvdf` function also takes a `color` argument. The `ct_cvdf` function launches an interactive interface to the `ct_find` function. It will use the default `contour_value` from the `ct_find` function (0.10) to recolor contours on the first instance; then, the function will ask the user if the `contour_value` used was a good value. If the user inputs "Y", the function will save that `contour_value` to a data frame and then move on to the next imagepath in the vector. If the user inputs "N" (or any other value), the interface will ask for a new `contour_value` and rerun the `ct_find` function. Once the function has gotten through all of the images in `imagepaths`, the `ct_cvdf` function will output the data frame of contour values chosen by the user.
+The `ct_cvdf` ("contour value data frame") function is an extension of the `ct_find` function. Rather than input just a single file path, the user can input a vector containing paths to multiple images to the `imagepaths` argument. The `ct_cvdf` function launches an interactive interface to the `ct_find` function. It will use the default `contour_value` from the `ct_find` function (0.10) to recolor contours on the first instance; then, the function will ask the user if the `contour_value` used was a good value. If the user inputs "Y", the function will save that `contour_value` to a data frame and then move on to the next imagepath in the vector. If the user inputs "N" (or any other value), the interface will ask for a new `contour_value` and rerun the `ct_find` function. Once the function has gotten through all of the images in `imagepaths`, the `ct_cvdf` function will output the data frame of contour values chosen by the user.
 
 <br>
 
@@ -257,9 +257,9 @@ Eventually, I hope to integrate the `ct_cvdf` function with the `ct_overlay` fun
 
 The final function, the `ct_overlay` function, is the workhorse of the `contourr` package. It allows the user to take the contours he or she found in one image and recolor those same (or similar) pixels in a new set of images. It will save the recolored images with "_contourr" appended to the original file name, so you won't lose any of your raw images. These are the arguments for the `ct_overlay` function:
 
-- `images`: a vector containing file paths to images. The default is 1. The first image is referred to as the "reference" image; this is the image in which contours will be found that will then be drawn on to the rest of the images. If `ref_images` is greater than 1, then the function will use *n* images as the reference images.
-- `ref_images`: a numeric input for the number of reference images to be used.
-- `roi_in`: an argument for supplying the coordinates of ROI's without having to draw them each time. There are three possible types of inputs depending on other inputs to the function. These are:
+- `images`: a vector containing file paths to images. The first image is referred to as the "reference" image; this is the image in which contours will be found that will then be drawn on to the rest of the images. If `ref_images` is greater than 1, then the function will use *n* images as the reference images.
+- `ref_images`: a numeric input for the number of reference images to be used. The default is one. 
+- `roi_in`: an argument for supplying the coordinates of ROI's without having to draw them each time. There are 3 possible types of inputs depending on other inputs to the function. These are:
   - `NULL` (default): will launch the user interface for drawing a ROI on the image. 
   - `ref_images` = 1: a data frame with 4 columns containing the coordinates to the top-left corner and the bottom-right corner of the ROI. Each ROI should be in its own row of the data frame.
   - `ref_images` > 1: a list of data frames, and the number of items in the list should be equal to the value of `ref_images`. Each item in the list should be a data frame with 4 columns containing the coordinates to the top-left corner and the bottom-right corner of the ROI for each reference image. Each ROI should be in its own row of the data frame.
@@ -286,7 +286,7 @@ im3 <- "../images/image05.jpg"
 
 <br>
 
-First, we'll just run the `ct_overlay` function without setting any of the new arguments (`shift` or `ref_images`).
+First, we'll just run the bare-bones `ct_overlay` function.
 
 <br>
 

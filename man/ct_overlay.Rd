@@ -2,39 +2,22 @@
 % Please edit documentation in R/ct_overlay.R
 \name{ct_overlay}
 \alias{ct_overlay}
-\title{Overlay Contours Onto Images}
+\title{Apply Contours to an Image}
 \usage{
-ct_overlay(
-  images,
-  ref_images = 1,
-  roi_in = NULL,
-  contour_value = 0.1,
-  color = "red",
-  regions = 1,
-  shift = c(0, 0),
-  show_image = TRUE
-)
+ct_overlay(imagepath, m, rgbcolor, show_image = FALSE)
 }
 \arguments{
-\item{images}{A vector containing file paths of images to be analyzed. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.}
+\item{imagepath}{The file path to the image to be recolored.}
 
-\item{ref_images}{A numeric indicating in how many reference images you want to search for contours. Default is 1. When greater than 1, the first n images will be used.}
+\item{m}{A vector of unique identifiers to pixels that were contours in a different image.}
 
-\item{roi_in}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL and ref_images = 1, input should be a 4-column data frame with a number of rows equal to regions. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. If "roi_in" is not NULL and ref_images > 1, input should be a list of length ref_images, and each item of the list should be a separate 4-column data frame for the region(s) of interest in each image. Note that plotting of images by "imager" starts in the top-left corner.}
+\item{rgbcolor}{A vector of new values for each of the color channels.}
 
-\item{contour_value}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
-
-\item{color}{A character string for the color of the superimposed object. Default is red.}
-
-\item{regions}{A numeric indicating how many regions to draw. Default is 1.}
-
-\item{shift}{A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down.}
-
-\item{show_image}{Logical. Plot images as they are recolored. Default is TRUE.}
+\item{show_image}{A Boolean indicating if the image should be displayed. Default is FALSE.}
 }
 \value{
-Recolored images. Saves recolored images to working directory with "_contourr" appended to the original name.
+Recolors and saves image.
 }
 \description{
-Find pixel coordinates of contours in defined regions of a reference image. Then, find and recolor the same pixels in new images.
+After finding contours in image(s), apply those contours to a new image.
 }
