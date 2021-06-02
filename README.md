@@ -1,13 +1,13 @@
 # contourr
-This package contains a few simple functions for finding an object in one image using its contours and overlaying its outline onto other images. 
+This package allows the user to find the contours (edges) in one image and apply those contours to other images.
 
 ### Prerequisites
 
-This package relies heavily on the package `imager`. The webpage for `imager` can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager). You also need `dplyr`, `progress`, and`stringr`. 
+This package relies heavily on the package `imager`. The webpage for `imager` can be viewed [here](http://dahtah.github.io/imager/), and the GitHub page can be viewed [here](https://github.com/dahtah/imager). You also need `dplyr`, `progressr`, and`stringr`. 
 
 ```
 
-install.packages(c("devtools", "dplyr", "imager", "progress", "stringr"))
+install.packages(c("devtools", "dplyr", "imager", "progressr", "stringr"))
 
 ```
 
@@ -22,11 +22,15 @@ library(contourr)
 
 ## Functions
 
-For now, this package contains three functions:
+There are three main functions in the `contourr` package. These are:
 
-* `ct_find`: a function for finding and recoloring contours in a single image, with the option to save the recolored image. The main purpose of this function is for the user to tinker with contour values to find the one best suited to their image.
-* `ct_cvdf`: an interactive function to help you find the right contour values for multiple images and then save those contour values in a data frame.
-* `ct_overlay`: a function for applying contour lines to a new set of images. This function builds on the `ct_find` function by applying the same recolored pixels to a new set of images. It also saves the recolored images with "contourr" appended to the original file name.
+* `ct_find`: a function for finding and recoloring contours in a single image, with the option to save the recolored image. 
+* `ct_apply`: a function for applying contours to a new set of images. This function builds on the `ct_find` function by applying the contours found in one image to a new set of images. It also saves the recolored images with "contourr" appended to the original file name.
+* `ct_roi`: an interactive function to help you find the right contour values for a series of input images. The drawn region(s) of interest and contour values are compiled and output as a list to then be used as inputs to the `ct_apply` function.
+
+The rest of the functions in the package are helper functions that feed into the main wrapper functions.
+
+
 
 For a detailed description of the methodology behind the functions, refer to the `contourr_methodology` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr_methodology.md). For a detailed description of the functions in the package, refer to the `contourr_use` [vignette](https://github.com/kaitlynstrickfaden/contourr/blob/master/vignettes/contourr_use.md). 
 
