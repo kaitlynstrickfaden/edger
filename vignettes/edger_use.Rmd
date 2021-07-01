@@ -1,0 +1,577 @@
+---
+title: "edger_use"
+author: "Kaitlyn Strickfaden"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{edger_use}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<br>
+
+```{r options, include = FALSE}
+knitr::opts_chunk$set(
+  fig.width = 8,
+  fig.height = 6,
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = F}
+library(edger)
+library(dplyr)
+library(imager)
+library(progress)
+library(qpdf)
+library(stringr)
+```
+
+<br>
+
+#  Using the *edger* Package
+
+The `edger` package provides a simple method for extracting the outlines of an object of interest in one image and overlaying the same outlines onto new images. This vignette describes the various functions and how to use them. For a detailed description of the methodology behind the functions, refer to the `edger` methodology [vignette](https://github.com/kaitlynstrickfaden/edger/blob/master/vignettes/edger_methodology.md).
+
+<br>
+
+It's really important that the object you want to extract contrasts with the background. If the image is overexposed or underexposed, or if the object is a similar color to the background, the methods described below won't work quite as well.
+
+
+## Functions
+
+<br>
+
+Right now, this package includes three functions:
+
+- `edger_find`: find and recolor outlines in just one image, with the option to save the output image. Useful for tinkering with threshold values until you find the right one for your image.
+- `edger_cvdf`: an interactive function to help you find the right threshold values for multiple images and then save those threshold values in a data frame.
+- `edger_overlay`: find and recolor outlines in one image, then overlay those outlines onto a set of other images.
+
+<br>
+
+---
+
+<br>
+
+## edger_find
+
+At its very simplest, the `edger_find` function takes the file path to an image as an input, asks the user to either draw or input a region of interest (**ROI**), and outputs a new image with the edges in that ROI recolored. There are a few other arguments to allow for more customization though. These are:
+
+<br>
+
+- `th`: a numeric input setting the threshold value for determining edges. Generally, this is a value greater than 0 and less than 0.20. Lower values capture weaker edges, and higher values capture stronger edges. The default is 0.10.
+- `roi_in`: an argument for supplying the coordinates of ROI's without having to draw them each time. The default is NULL and will cause the function to launch the user interface for drawing a ROI on the image. If the user decides to input a ROI, it must be input as a data frame with 4 columns containing the coordinates to the top-left corner and the bottom-right corner of the ROI. Each ROI will be in its own row of the data frame.
+- `color`: a character string for the desired color of the recolored pixels. The default is red, but that may not be a preferred color in all contexts.
+- `regions`: a numeric input for setting the number of ROI's to draw. The default is 1. If a user has multiple objects in an image but does not want to capture the area between the objects, he or she can increase the value of `regions` to capture each object separately.
+- `save`: a Boolean (T/F) indicating if the recolored image should be saved. The default is False, but if it is set to True, the recolored image will be saved to the working directory with "_edger" appended to the original file name.
+
+<br> 
+
+Let's see the `edger_find` function in action. First we'll load in a file path to a raw image:
+
+<br>
+
+```{r load image 1}
+im1 <- "../images/image03.jpg"
+par(mar = c(0,0,0,0))
+plot(imager::load.image(im1), axes = F)
+```
+
+<br>
+
+If we provide this file path to the `edger_find` function, this is the result:
+
+<br>
+
+```{r edger_find dummy 1, echo = T, eval = FALSE}
+edger::edger_find(im1)
+```
+
+```{r edger_find function edited for Markdown 1, echo = F}
+edger_find1 <- function(image,
+                    roi_in,
+                    th = 0.1,
+                    color = "red",
+                    regions = 1,
+                    save = FALSE)
+
+{
+
+  ## Load in the image
+
+  im <- imager::load.image(image)
+  im_df <- as.data.frame(im)
+
+  ## Manipulate image for finding edges & make into df
+
+  im_bw <- as.data.frame(imager::enorm(imager::imgradient(imager::grayscale(im),"xy")))
+
+  ## Assign unique pixel values for indexing
+
+  im_df$id <- rep(1:length(im_bw$x), times = 3)
+  im_bw$id <- 1:length(im_bw$x)
+
+  ## Find RGB value of selected color
+
+  rgbcolor <- as.vector(grDevices::col2rgb(color)/255)
+
+  ## Define region of interest
+
+  roi <- NULL
+
+  for (i in 1:regions) {
+
+    im_roi <- as.numeric(roi_in[i,])
+
+    roi2 <- dplyr::filter(im_bw,
+                   im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                   im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
+
+    roi <- rbind(roi, roi2)
+
+  } # End of regions
+  
+  ## Track time
+
+  st <- Sys.time()
+
+  ## Find edges in region of interest
+
+  roi_c <- roi[roi$value >= th,]
+
+  ## Match edge pixels in full image
+
+  m <- im_df$id[match(roi_c$id, im_df$id)]
+
+  ## Recolor edge pixels in full image
+
+  im_df$value[im_df$id %in% m] <- rep(rgbcolor, each = length(m))
+  
+  
+
+  ## Display the new image
+
+  im <- imager::as.cimg(im_df, dim = dim(im))
+  par(mar = c(0,0,0,0))
+  plot(im)
+
+
+  ## Save new image if save == TRUE
+
+  if (save == TRUE) {
+
+    image_split <- stringr::str_split(image, "\\.")[[1]]
+    image_start <- str_flatten(image_split[c(1:length(image_split) - 1)], collapse = ".")
+    image_end <- image_split[length(image_split)]
+    image_name <- paste(image_start, "_edger.", image_end, sep = "")
+
+
+    grDevices::jpeg(image_name, width = dim(im)[1], height = dim(im)[2])
+    par(mar = c(0,0,0,0))
+    plot(im)
+    dev.off()
+
+  } # End of save == TRUE
+
+  round(Sys.time() - st, 2)
+
+} # End of function
+
+
+# roi1 <- imager::grabRect(imager::load.image(im1), output = "coord")
+roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
+
+edger_find1(im1, roi1)
+
+```
+ 
+ <br>
+
+Note also that the `edger_find` function outputs the amount of time it took for the function to run.
+
+<br>
+
+A threshold value of 0.10 looks pretty good for this image, but let's adjust some of the inputs and try again just to see what happens. We'll also set the ROI externally. When `imager` plots an image, it starts by plotting the top-left corner and then working its way right and then *down*, so it's a bit different from normal plotting convention. But if you use `imager`'s `grabRect` function, it will output those coordinates correctly.
+
+<br>
+
+```{r edger_find dummy 2, echo = T, eval = FALSE}
+roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
+edger::edger_find(im1, roi_in = roi1, th = 0.07, color = "cyan1")
+```
+
+```{r edger_find function edited for Markdown 2, echo = F}
+edger_find1(im1, roi_in = roi1, th = 0.07, color = "cyan1")
+rect(roi1[,1], roi1[,2], roi1[,3], roi1[,4], lwd = 2)
+text(x = roi1[,1] - 100, roi1[,2] - 40, labels = str_glue("({roi1[,1]}, {roi1[,2]})"))
+text(x = roi1[,3] + 120, roi1[,4] + 40, labels = str_glue("({roi1[,3]}, {roi1[,4]})"))
+```
+
+<br>
+
+Notice that by decreasing the `th` input, we picked up some weaker edges around the measuring stake. 
+
+<br>
+
+If we wanted to recolor the edges of that second measuring stake too, we can do that by increasing the `regions` input and adding another row to our `roi_in` data frame.
+
+<br>
+
+```{r edger_find dummy 3, echo = T, eval = FALSE}
+roi2 <- data.frame(x1 = 457, y1 = 501, x2 = 526, y2 = 1105)
+edger::edger_find(im1, roi_in = rbind(roi1, roi2), regions = 2, color = "purple")
+```
+
+```{r edger_find function edited for Markdown 3, echo = F}
+#roi2 <- imager::grabRect(imager::load.image(im1), output = "coord")
+roi2 <- data.frame(x1 = 457, y1 = 501, x2 = 526, y2 = 1105)
+edger_find1(im1, roi_in = rbind(roi1, roi2), regions = 2, color = "purple")
+```
+
+<br>
+
+---
+
+<br>
+
+## edger_cvdf
+
+The `edger_cvdf` ("contour value data frame") function is an extension of the `edger_find` function. Rather than input just a single file path, the user can input a vector containing paths to multiple images to the `imagepaths` argument. The `edger_cvdf` function launches an interactive interface to the `edger_find` function. It will use the default `th` from the `edger_find` function (0.10) to recolor edges on the first instance; then, the function will ask the user if the `th` used was a good value. If the user inputs "Y", the function will save that `th` to a data frame and then move on to the next imagepath in the vector. If the user inputs "N" (or any other value), the interface will ask for a new `th` and rerun the `edger_find` function. Once the function has gotten through all of the images in `imagepaths`, the `edger_cvdf` function will output the data frame of threshold values chosen by the user.
+
+<br>
+
+Eventually, I hope to integrate the `edger_cvdf` function with the `edger_overlay` function described below so that `edger_overlay` can be automated even more. I haven't quite gotten around to that yet though. Stay tuned! 
+
+<br>
+
+---
+
+<br>
+
+## edger_overlay
+
+<br>
+
+The final function, the `edger_overlay` function, is the workhorse of the `edger` package. It allows the user to take the edges he or she found in one image and recolor those same (or similar) pixels in a new set of images. It will save the recolored images with "_edger" appended to the original file name, so you won't lose any of your raw images. These are the arguments for the `edger_overlay` function:
+
+- `images`: a vector containing file paths to images. The first image is referred to as the "reference" image; this is the image in which edges will be found that will then be drawn on to the rest of the images. If `ref_images` is greater than 1, then the function will use *n* images as the reference images.
+- `ref_images`: a numeric input for the number of reference images to be used. The default is one. 
+- `roi_in`: an argument for supplying the coordinates of ROI's without having to draw them each time. There are 3 possible types of inputs depending on other inputs to the function. These are:
+  - `NULL` (default): will launch the user interface for drawing a ROI on the image. 
+  - `ref_images` = 1: a data frame with 4 columns containing the coordinates to the top-left corner and the bottom-right corner of the ROI. Each ROI should be in its own row of the data frame.
+  - `ref_images` > 1: a list of data frames, and the number of items in the list should be equal to the value of `ref_images`. Each item in the list should be a data frame with 4 columns containing the coordinates to the top-left corner and the bottom-right corner of the ROI for each reference image. Each ROI should be in its own row of the data frame.
+- `th`: a numeric input setting the threshold value for determining edges. Generally, this is a value greater than 0 and less than 0.20. Lower values capture weaker edges, and higher values capture stronger edges. The default is 0.10.
+- `color`: a character string for the desired color of the recolored pixels. The default is red, but that may not be a preferred color in all contexts.
+- `regions`: a numeric input for setting the number of ROI's to draw. The default is 1. If a user has multiple objects in an image but does not want to capture the area between the objects, he or she can increase the value of `regions` to capture each object separately.
+- `shift`: a vector of length 2 for the number of pixels the drawn object should be moved left, right, up, or down. The first value in the pair will be the left-right shift, and the second value will be the up-down shift. The default is no shift (`c(0,0)`).
+- `show_image`: a Boolean (T/F) indicating if the images should be plotted after being recolored. The default is True. The function takes longer to run if `show_image` is True, but plotting images allows the user to diagnose issues with the recoloring.
+
+<br>
+
+It looks like a lot of inputs, but most of them are the same as the arguments for `edger_find`. 
+
+<br>
+
+Let's load in a few more images:
+
+<br>
+
+```{r load images 2 and 3}
+im2 <- "../images/image04.jpg"
+im3 <- "../images/image05.jpg"
+```
+
+<br>
+
+First, we'll just run the bare-bones `edger_overlay` function.
+
+<br>
+
+```{r edger_overlay dummy 1, echo = T, eval = FALSE}
+roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
+edger::edger_overlay(c(im1, im2), roi_in = roi1, color = "green1")
+```
+
+
+```{r edger_overlay function edited for Markdown 1, echo = F}
+
+edger_overlay1 <- function(images,
+                       ref_images = 1,
+                       roi_in = NULL,
+                       th = .1,
+                       color = "red",
+                       regions = 1,
+                       shift = c(0,0),
+                       show_image = TRUE)
+
+{
+
+
+  rgbcolor <- as.vector(grDevices::col2rgb(color)/255)
+
+  roi <- NULL
+
+  x_shift <- shift[1]
+  y_shift <- -shift[2]
+
+  ## Load in reference image(s)
+
+  for (j in 1:ref_images) {
+
+    im <- imager::load.image(images[j])
+    im_df <- as.data.frame(im)
+
+    ## Manipulate image for finding edges & make into df
+
+    im_bw <- as.data.frame(imager::enorm(imager::imgradient(imager::grayscale(im),"xy")))
+
+    ## Assign unique pixel values for indexing
+
+    im_bw$id <- 1:length(im_bw$x)
+
+
+    ## Define region of interest if "roi_in" is not set:
+
+    if (is.null(roi_in) == TRUE) {
+
+      for (i in 1:regions) {
+
+        im_roi <- imager::grabRect(im, output = "coord")
+
+        roi2 <- dplyr::filter(im_bw,
+                              im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                                im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
+
+        roi <- rbind(roi, roi2)
+
+      } # End of regions
+
+    }
+
+
+    ## Define region of interest if "roi_in" is set and ref_images == 1:
+
+    if (is.null(roi_in) == FALSE & ref_images == 1) {
+
+      for (i in 1:regions) {
+
+        im_roi <- as.numeric(roi_in[i,])
+
+        roi2 <- dplyr::filter(im_bw,
+                              im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                                im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
+
+        roi <- rbind(roi, roi2)
+
+      } # End of regions
+
+    }
+
+    ## Define region of interest if "roi_in" is set and ref_images > 1:
+
+    if (is.null(roi_in) == FALSE & ref_images > 1) {
+
+      for (i in 1:regions) {
+
+        im_roi <- as.numeric(roi_in[[j]][i,])
+
+        roi2 <- dplyr::filter(im_bw,
+                              im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
+                                im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4])
+
+        roi <- rbind(roi, roi2)
+
+      } # End of regions
+
+    }
+
+  } # End of photos
+
+
+  roi <- dplyr::distinct(roi)
+
+
+  ## Progress Bar
+
+  pb <- progress_bar$new(
+    format = " recoloring image :current of :total  [:bar]  :percent  elapsed: :elapsedfull",
+    total = length(images), clear = FALSE, width = 80)
+
+
+
+  im <- imager::load.image(images[1])
+  im_df <- as.data.frame(im)
+  im_df$id <- rep(1:length(im_bw$x), times = 3)
+
+
+  ## Find edges in region of interest
+
+  roi_cv <- roi[roi$value >= th,]
+
+  ## Find pixels to recolor in full image (accounting for shifting)
+
+  m_df <- im_df[match(roi_cv$id, im_df$id),]
+  m_df$keep <- "Y"
+
+  for (i in seq_along(m_df$id)) {
+
+    if (m_df$x[i] + x_shift > dim(im)[1]) {
+      m_df$keep[i] <- "N" }
+    if (m_df$x[i] + x_shift < 0) {
+      m_df$keep[i] <- "N" }
+    if (m_df$y[i] + y_shift > dim(im)[2]) {
+      m_df$keep[i] <- "N" }
+    if (m_df$y[i] + y_shift < 0) {
+      m_df$keep[i] <- "N" }
+
+  }
+
+  m <- m_df$id[m_df$keep == "Y"] + x_shift + (y_shift * dim(im)[2])
+
+
+  ## Recolor edge pixels in full image
+
+  im_df$value[im_df$id %in% m] <- rep(rgbcolor, each = length(m))
+
+  ## Display the new image
+
+  im <- imager::as.cimg(im_df, dim = dim(im))
+
+  par(mar = c(0,0,0,0))
+  plot(im)
+
+  pb$tick()
+
+  # Save new photo
+
+  # image_split1 <- stringr::str_split(images[1], "\\.")[[1]]
+  # image_start1 <- str_flatten(image_split1[c(1:length(image_split1) - 1)], collapse = ".")
+  # image_end1 <- image_split1[length(image_split1)]
+  # image_name1 <- paste(image_start1, "_edger.", image_end1, sep = "")
+  # 
+  # grDevices::jpeg(image_name1, width = dim(im)[1], height = dim(im)[2])
+  # par(mar = c(0,0,0,0))
+  # plot(im)
+  # dev.off()
+
+
+  ## Recolor other images
+
+  for (i in 2:length(images)) {
+
+    ## Load in new image
+
+    im2 <- imager::load.image(images[i])
+    im2_df <- as.data.frame(im2)
+    im2_df$id <- im_df$id
+
+
+    ## Recolor edge pixels in full image
+
+    im2_df$value[im2_df$id %in% m] <- rep(rgbcolor, each = length(m))
+
+    im2 <- imager::as.cimg(im2_df, dim = dim(im2))
+
+
+    ## (Optionally) display the new image
+
+    if (show_image == TRUE) {
+      par(mar = c(0,0,0,0))
+      plot(im2)
+    }
+
+    ## Save the new image
+
+    # image_split <- stringr::str_split(images[i], "\\.")[[1]]
+    # image_start <- str_flatten(image_split[c(1:length(image_split) - 1)], collapse = ".")
+    # image_end <- image_split[length(image_split)]
+    # image_name <- paste(image_start, "_edger.", image_end, sep = "")
+    # 
+    # grDevices::jpeg(image_name, width = dim(im2)[1], height = dim(im2)[2])
+    # par(mar = c(0,0,0,0))
+    # plot(im2)
+    # dev.off()
+
+    pb$tick()
+
+  } # End of recolor new images
+
+
+} # End of function
+
+roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
+edger_overlay1(c(im1, im2), roi_in = roi1, color = "green1")
+
+```
+
+<br>
+
+This function comes with a progress bar, courtesy of the `progress` package. The progress bar tells the user which image the function is currently recoloring, how many total images it has to recolor, a percent completion, and an elapsed time.
+
+<br>
+
+Now let's shift the recolored pixels. The `shift` input acts like a coordinate pair where the first value is for the x shift and the second value is for the y shift. Positive values are for shift right or up, and negative values are for shifts left or down. Let's shift the recolored pixels 200 to the right and 200 down.
+
+<br>
+
+```{r edger_overlay dummy 2, echo = T, eval = FALSE}
+edger::edger_overlay(c(im1, im2), roi_in = roi1, 
+                     shift = c(200, -200), color = "orangered2")
+```
+
+
+```{r edger_overlay function edited for Markdown 2, echo = F}
+edger_overlay1(c(im1, im2), roi_in = roi1, 
+            shift = c(200, -200), color = "orangered2")
+```
+
+<br>
+
+Hopefully you can see how this functionality will be very useful if the camera viewshed changes partway through the camera's deployment, though it might take a little trial and error to figure out by how many pixels to shift.
+
+<br>
+
+Now let's use two reference images. Externally setting the ROI's is a bit more complicated when there is more than one reference image, but the basic idea is that each image needs its own data frame of coordinates to the ROI. Then each separate data frame gets added to a list.
+
+<br>
+
+```{r edger_overlay dummy 3, echo = T, eval = FALSE}
+roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
+roi3 <- data.frame(x1 = 1687, y1 = 66, x2 = 1761, y2 = 1219)
+
+edger::edger_overlay(c(im1, im2), 
+                     ref_images = 2, roi_in = list(roi1, roi3), 
+                     color = "deeppink1")
+```
+
+
+```{r edger_overlay function edited for Markdown 3, echo = F}
+roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
+#roi3 <- imager::grabRect(imager::load.image(im3), output = "coord")
+roi3 <- data.frame(x1 = 1687, y1 = 66, x2 = 1761, y2 = 1219)
+edger_overlay1(c(im1, im3), 
+                     ref_images = 2, roi_in = list(roi1, roi3), 
+                     color = "deeppink1")
+```
+
+<br>
+
+Cool! Now we've drawn the measuring stake from the second image onto the first image, and we've drawn the measuring stake from the first image onto the second image. This functionality is useful if you have multiple objects of interest but they don't all appear in the same image.
+
+<br>
+
+A couple of other tips:
+
+- Base R's `list.files` function is very handy for creating a vector of file paths to set as the `images` argument.
+- It's best to change your working directory to the directory containing your image files since the `edger_overlay` function just places the recolored images in your working directory. If you have images spread across multiple cameras, but the image names repeat, then you'll end up overwriting recolored images.
+- Unfortunately, this recoloring process does **not** retain the images' metadata. Future iterations of this package may extract metadata from the raw image and attribute it to the recolored one during recoloring. For now, please refer to the `exiftoolr` [package](https://github.com/JoshOBrien/exiftoolr]) for extracting metadata from your raw images.
+
+<br>
+
+
+
+
+
