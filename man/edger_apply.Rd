@@ -2,7 +2,7 @@
 % Please edit documentation in R/edger_apply.R
 \name{edger_apply}
 \alias{edger_apply}
-\title{Overlay Contours Onto Images}
+\title{Apply Edges to Images}
 \usage{
 edger_apply(
   images,
@@ -11,6 +11,7 @@ edger_apply(
   th = 0.1,
   regions = 1,
   shift = c(0, 0),
+  rotate = 0,
   color = "red",
   show_image = TRUE,
   process = "sequential",
@@ -18,17 +19,19 @@ edger_apply(
 )
 }
 \arguments{
-\item{images}{A vector containing file paths of images to be analyzed. The first image will be the reference image, and contours from the first image will be superimposed onto the other images.}
+\item{images}{A vector containing file paths of images to be analyzed. The first image will be the reference image, and edges from the first image will be superimposed onto the other images.}
 
-\item{ref_images}{A numeric indicating in how many reference images you want to search for contours. Default is 1. When greater than 1, the first n images will be used.}
+\item{ref_images}{A numeric indicating in how many reference images you want to search for edges. Default is 1. When greater than 1, the first n images will be used.}
 
-\item{roi_in}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL, input should be a list of length ref_images, and each item of the list should be a separate 4-column data frame for the region(s) of interest in each image. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.}
+\item{roi_in}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL, input should be a list containing 4-column data frames with a number of rows equal to regions, with one data frame per ref_images. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.}
 
-\item{th}{A vector of numeric values between 0-1 for the lowest contour value you want to recolor in each image(a low contour value captures weaker contrasts). Default is 0.1.}
+\item{th}{A vector of numeric values between 0-1 for the lowest threshold value you want to recolor in each image(a low threshold value captures weaker contrasts). Default is 0.1.}
 
 \item{regions}{A numeric indicating how many regions to draw. Default is 1.}
 
-\item{shift}{A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down.}
+\item{shift}{A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down. Default is c(0,0).}
+
+\item{rotate}{A numeric indicating the number of degrees to rotate the recolored pixels. Pixels are rotated around the center of the edge pixels. Default is 0.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
 
@@ -39,8 +42,8 @@ edger_apply(
 \item{cores}{A numeric indicating how many cores to use in parallel processing. Safest is availableCores() - 1. Default is 1.}
 }
 \value{
-Recolored images. Saves recolored images to working directory with "_contourr" appended to the original name.
+Recolored images. Saves recolored images to working directory with "_edger" appended to the original name.
 }
 \description{
-Find pixel coordinates of contours in defined regions of a reference image. Then, find and recolor the same pixels in new images.
+Find pixel coordinates of edges in defined regions of a reference image. Then, find and recolor the same pixels in new images.
 }

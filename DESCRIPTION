@@ -23,7 +23,7 @@ Imports:
     grDevices,
     imager,
     magrittr,
-    progress,
+    progressr,
     purrr,
     rlang,
     stringr

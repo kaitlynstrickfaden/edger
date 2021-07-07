@@ -18,15 +18,15 @@ edger_find(
 \arguments{
 \item{imagepath}{The file path to the image to be analyzed.}
 
-\item{roi_in}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL input should be a 4-column data frame with a number of rows equal to regions. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.}
+\item{roi_in}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL, input should be a list containing a 4-column data frame with a number of rows equal to regions. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.}
 
 \item{th}{A numeric between 0-1 for the lowest contour value you want to recolor (a low contour value captures weaker contrasts). Default is 0.1.}
 
 \item{regions}{A numeric indicating how many regions to draw. Default is 1.}
 
-\item{shift}{A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down.}
+\item{shift}{A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down. Default is c(0,0).}
 
-\item{rotate}{A numeric indicating the number of degrees to rotate the recolored pixels. Pixels are rotated around the center of the contour pixels.}
+\item{rotate}{A numeric indicating the number of degrees to rotate the recolored pixels. Pixels are rotated around the center of the edge pixels. Default is 0.}
 
 \item{color}{A character string for the color of the superimposed object. Default is red.}
 
