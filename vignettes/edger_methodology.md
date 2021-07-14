@@ -197,9 +197,9 @@ roi <- filter(im1_bw,
 
 <br>
 
-`edger_find` and `edger_overlay` both allow you to set the number of
+`edger_find` and `edger_apply` both allow you to set the number of
 regions so you can define several regions of interest if you need.
-`edger_overlay` even lets you define regions in multiple images\!
+`edger_apply` even lets you define regions in multiple images\!
 
 <br>
 
