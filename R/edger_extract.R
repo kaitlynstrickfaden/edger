@@ -24,13 +24,13 @@
 
 
 edger_extract <- function(imagepath,
-                       roi_in = NULL,
-                       th = 0.1,
-                       regions = 1,
-                       shift = c(0,0),
-                       rotate = 0,
-                       color = "red",
-                       show_image = TRUE)
+                          roi_in = NULL,
+                          th = 0.1,
+                          regions = 1,
+                          shift = c(0,0),
+                          rotate = 0,
+                          color = "red",
+                          show_image = TRUE)
 
 {
 

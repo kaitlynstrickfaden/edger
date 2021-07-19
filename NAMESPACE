@@ -2,9 +2,8 @@
 
 export("%>%")
 export(edger_apply)
-export(edger_df_to_im)
 export(edger_df_to_im_bw)
-export(edger_df_to_im_col)
+export(edger_df_to_im_color)
 export(edger_display)
 export(edger_extract)
 export(edger_find)

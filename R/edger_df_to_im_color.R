@@ -12,7 +12,7 @@
 #' @export
 
 
-edger_df_to_im_col <- function(imdf, show = FALSE)
+edger_df_to_im_color <- function(imdf, show = FALSE)
 
 {
 
