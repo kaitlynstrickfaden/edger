@@ -24,7 +24,8 @@ edger_roi <- function(imagepaths, regions = 1, color = "red") {
   }
 
 
-  d <- list()
+  roi <- list()
+  th <- c()
 
 
   for (j in seq_along(imagepaths)) {
@@ -59,8 +60,8 @@ edger_roi <- function(imagepaths, regions = 1, color = "red") {
         x <- readline(prompt = "Is this a good threshold value? Input Y for yes or N for no: ")
 
         if (x == "Y") {
-          roi_add <- cbind(roi_in, tv)
-          roi_d <- rbind(roi_d, roi_add)
+          roi_d <- rbind(roi_d, roi_in)
+          th <- c(th, tv)
           done <- TRUE
         }
 
@@ -85,11 +86,11 @@ edger_roi <- function(imagepaths, regions = 1, color = "red") {
 
       } # end of regions loop
 
-    d[[j]] <- list(Image = refimage, ROI = roi_d)
+    roi[[j]] <- roi_d
 
   } # end of images loop
 
-  return(d)
+  return(list("roi" = roi,"th" = th))
 
 } # end of function
 
