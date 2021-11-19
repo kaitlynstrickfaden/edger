@@ -30,7 +30,7 @@
 
 
 
-edger_apply <- function(images,
+edger_multi <- function(images,
                         ref_images = 1,
                         roi_in = NULL,
                         th = 0.1,

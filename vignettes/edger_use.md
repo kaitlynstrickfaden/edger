@@ -1,7 +1,7 @@
 edger\_use
 ================
 Kaitlyn Strickfaden
-2021-07-19
+2021-11-18
 
 <br>
 
@@ -29,36 +29,36 @@ won’t work quite as well.
 
 Right now, this package includes three functions:
 
-  - `edger_find`: find and recolor outlines in just one image, with the
-    option to save the output image. Useful for tinkering with threshold
-    values until you find the right one for your image.
-  - `edger_roi`: an interactive function to extract coordinates for the
-    region(s) of interest (ROI) and find appropriate threshold values.
-    The coordinates and values are output in a format that can be used
-    by `edger_find` and `edger_apply`.
-  - `edger_apply`: find and recolor outlines in one image, then
+-   `edger_single`: find and recolor outlines in just one image, with
+    the option to save the output image. Useful for tinkering with
+    threshold values until you find the right one for your image.
+-   `edger_testr`: an interactive function to extract coordinates for
+    the region(s) of interest (ROI) and find appropriate threshold
+    values. The coordinates and values are output in a format that can
+    be used by `edger_single` and `edger_multi`.
+-   `edger_multi`: find and recolor outlines in one image, then
     superimpose those outlines onto a set of other images.
 
 <br>
 
------
+------------------------------------------------------------------------
 
 <br>
 
-## edger\_find
+## edger\_single
 
-The `edger_find` function takes the file path to an image as an input,
+The `edger_single` function takes the file path to an image as an input,
 asks the user to either draw or input a region of interest (**ROI**),
 and outputs a new image with the edges in that ROI recolored. There are
 a few other arguments to allow for more customization though. These are:
 
 <br>
 
-  - `th`: a numeric input setting the threshold value for determining
+-   `th`: a numeric input setting the threshold value for determining
     edges. Generally, this is a value greater than 0 and less than 0.20.
     Lower values capture weaker edges, and higher values capture
     stronger edges. The default is 0.10.
-  - `roi_in`: an argument for supplying the coordinates of ROIs without
+-   `roi_in`: an argument for supplying the coordinates of ROIs without
     having to draw them each time. The default is NULL and will cause
     the function to launch the user interface for drawing a ROI on the
     image. If the user decides to input the ROI, it must be input as a
@@ -67,30 +67,30 @@ a few other arguments to allow for more customization though. These are:
     ROI. Each ROI must be in its own row of the data frame. It may seem
     weird that the roi\_in has to be a list of a single data frame, but
     this is just so the object type of `roi_in` is the same whether you
-    have one `roi_in` or several (as is possible with `edger_apply`).
-  - `regions`: a numeric input for setting the number of ROIs to draw.
+    have one `roi_in` or several (as is possible with `edger_multi`).
+-   `regions`: a numeric input for setting the number of ROIs to draw.
     The default is 1. If a user has multiple objects in an image but
     does not want to capture the area between the objects, he or she can
     increase the value of `regions` to capture each object separately.
-  - `shift`: a vector of length 2 for the number of pixels the drawn
+-   `shift`: a vector of length 2 for the number of pixels the drawn
     object should be moved left, right, up, or down. The first value in
     the pair will be the left-right shift, and the second value will be
     the up-down shift. The default is no shift (`c(0,0)`).
-  - `rotate`: a numeric indicating how many degrees to rotate the
+-   `rotate`: a numeric indicating how many degrees to rotate the
     recolored pixels. Negative values rotate the pixels
     counter-clockwise, and positive values rotate the pixels clockwise.
     The default is 0.
-  - `color`: a character string for the desired color of the recolored
+-   `color`: a character string for the desired color of the recolored
     pixels. The default is red, but that may not be a preferred color in
     all contexts.
-  - `save`: a Boolean (T/F) indicating if the recolored image should be
+-   `save`: a Boolean (T/F) indicating if the recolored image should be
     saved. The default is False, but if it is set to True, the recolored
     image will be saved to the working directory with "\_edger" appended
     to the original file name.
 
 <br>
 
-Let’s see the `edger_find` function in action. First we’ll load in a
+Let’s see the `edger_single` function in action. First we’ll load in a
 file path to a raw image:
 
 <br>
@@ -105,22 +105,22 @@ plot(imager::load.image(im1), axes = F)
 
 <br>
 
-If we provide this file path to the `edger_find` function, this is the
+If we provide this file path to the `edger_single` function, this is the
 result:
 
 <br>
 
 ``` r
-edger::edger_find(im1)
+edger::edger_single(im1)
 ```
 
-![](edger_use_files/figure-gfm/edger_find%201-1.png)<!-- -->
+![](edger_use_files/figure-gfm/edger_single%201-1.png)<!-- -->
 
-    #> Time difference of 4.23 secs
+    #> Time difference of 4.57 secs
 
 <br>
 
-Note also that the `edger_find` function outputs the amount of time it
+Note also that the `edger_single` function outputs the amount of time it
 took for the function to run.
 
 <br>
@@ -137,12 +137,12 @@ correctly.
 
 ``` r
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger::edger_find(im1, roi_in = list(roi1), th = 0.07, color = "cyan1")
+edger::edger_single(im1, roi_in = list(roi1), th = 0.07, color = "cyan1")
 ```
 
-    #> Time difference of 4.27 secs
+    #> Time difference of 4.34 secs
 
-![](edger_use_files/figure-gfm/edger_find%202-1.png)<!-- -->
+![](edger_use_files/figure-gfm/edger_single%202-1.png)<!-- -->
 
 <br>
 
@@ -159,61 +159,63 @@ our `roi_in` data frame.
 
 ``` r
 roi2 <- data.frame(x1 = 457, y1 = 501, x2 = 526, y2 = 1105)
-edger::edger_find(im1, roi_in = list(rbind(roi1, roi2)), regions = 2, color = "purple")
+edger::edger_single(im1, roi_in = list(rbind(roi1, roi2)), regions = 2, color = "purple")
 ```
 
-![](edger_use_files/figure-gfm/edger_find%203-1.png)<!-- -->
+![](edger_use_files/figure-gfm/edger_single%203-1.png)<!-- -->
 
-    #> Time difference of 4.12 secs
-
-<br>
-
------
+    #> Time difference of 4.28 secs
 
 <br>
 
-## edger\_roi
-
-The `edger_roi` (“region of interest”) function is an extension of the
-`edger_find` function. Rather than input just a single file path, the
-user can input a vector containing paths to multiple images to the
-`imagepaths` argument. The `edger_roi` function launches an interactive
-interface to the `edger_find` function. It will use the default `th`
-from the `edger_find` function (0.10) to recolor edges on the first
-instance; then, the function will ask the user if the `th` used was a
-good value. If the user inputs “Y”, the function will save the ROI
-coordinates and `th` to a list of data frames and then move on to the
-next imagepath in the vector. If the user inputs “N” (or any other
-value), the interface will ask for a new `th` and rerun the `edger_find`
-function. Once the function has gotten through all of the images in
-`imagepaths`, the `edger_cvdf` function will output a list of data
-frames containing coordinates to ROIs and threshold values.
+------------------------------------------------------------------------
 
 <br>
 
------
+## edger\_testr
+
+The `edger_testr` function is an extension of the `edger_single`
+function. Rather than input just a single file path, the user can input
+a vector containing paths to multiple images to the `imagepaths`
+argument. The `edger_testr` function launches an interactive interface
+to the `edger_single` function. It will use the default `th` from the
+`edger_single` function (0.10) to recolor edges on the first instance;
+then, the function will ask the user if the `th` used was a good value.
+If the user inputs “Y”, the function will save the ROI coordinates and
+`th` to a list of data frames. If the user inputs “N” (or any other
+value), the interface will ask for a new `th` and rerun the
+`edger_single` function. It will run this same procedure on the shift
+and rotate inputs. It will move on to a new image once a threshold,
+shift, and rotate value have been selected for the current image. Once
+the function has gotten through all of the images in `imagepaths`, the
+`edger_cvdf` function will output a list containing coordinates to ROIs,
+threshold values, shift values, and rotate values.
 
 <br>
 
-## edger\_apply
+------------------------------------------------------------------------
 
 <br>
 
-The final function, the `edger_apply` function, is the workhorse of the
+## edger\_multi
+
+<br>
+
+The final function, the `edger_multi` function, is the workhorse of the
 `edger` package. It allows the user to take the edges he or she found in
 one image and recolor those pixels in a new set of images with any
 shifting or rotation as desired. It will save the recolored images with
 "\_edger" appended to the original file name, so you won’t lose any of
-your raw images. These are the arguments for the `edger_apply` function:
+your raw images. These are the arguments for the `edger_multi` function:
 
-  - `images`: a vector containing file paths to images. The first image
+-   `images`: a vector containing file paths to images. The first image
     is referred to as the “reference” image; this is the image in which
     edges will be found that will then be drawn on to the rest of the
     images. If `ref_images` is greater than 1, then the function will
     use *n* images as the reference images.
-  - `ref_images`: a numeric input for the number of reference images to
+-   `ref_images`: a numeric input for the number of reference images to
     be used. The default is one.
-  - `roi_in`: an argument for supplying the coordinates of ROIs without
+-   `roi_in`: an argument for supplying the coordinates of ROIs without
     having to draw them each time. The default is NULL and will cause
     the function to launch the user interface for drawing a ROI on the
     image. If the user decides to input the ROI, it must be input as a
@@ -221,40 +223,40 @@ your raw images. These are the arguments for the `edger_apply` function:
     frame must contain the minimum x, minimum y, maximum x, and maximum
     y coordinate of the ROI. Each ROI must be in its own row of the data
     frame.
-  - `th`: a numeric input setting the threshold value for determining
+-   `th`: a numeric input setting the threshold value for determining
     edges. Generally, this is a value greater than 0 and less than 0.20.
     Lower values capture weaker edges, and higher values capture
     stronger edges. The default is 0.10.
-  - `regions`: a numeric input for setting the number of ROIs to draw.
+-   `regions`: a numeric input for setting the number of ROIs to draw.
     The default is 1. If a user has multiple objects in an image but
     does not want to capture the area between the objects, he or she can
     increase the value of `regions` to capture each object separately.
-  - `shift`: a vector of length 2 for the number of pixels the drawn
+-   `shift`: a vector of length 2 for the number of pixels the drawn
     object should be moved left, right, up, or down. The first value in
     the pair will be the left-right shift, and the second value will be
     the up-down shift. The default is no shift (`c(0,0)`).
-  - `rotate`: a numeric indicating how many degrees to rotate the
+-   `rotate`: a numeric indicating how many degrees to rotate the
     recolored pixels. Negative values rotate the pixels
     counter-clockwise, and positive values rotate the pixels clockwise.
     The default is 0.
-  - `color`: a character string for the desired color of the recolored
+-   `color`: a character string for the desired color of the recolored
     pixels. The default is red, but that may not be a preferred color in
     all contexts.
-  - `show_image`: a Boolean (T/F) indicating if the images should be
+-   `show_image`: a Boolean (T/F) indicating if the images should be
     plotted after being recolored. The default is True. The function
     takes longer to run if `show_image` is True, but plotting images
     allows the user to diagnose issues with the recoloring.
-  - `process`: a character input of either “sequential” or “parallel”
+-   `process`: a character input of either “sequential” or “parallel”
     indicating if the images should be processed on one core or many.
     The number of cores used is determined by the “cores” argument. The
     default is “sequential”.
-  - `cores`: a numeric indicating how many cores on which to process
+-   `cores`: a numeric indicating how many cores on which to process
     images. The default is 1 (i.e. sequential).
 
 <br>
 
 It looks like a lot of inputs, but most of them are the same as the
-arguments for `edger_find`.
+arguments for `edger_single`.
 
 <br>
 
@@ -269,16 +271,14 @@ im3 <- "../images/image05.jpg"
 
 <br>
 
-First, we’ll just run the bare-bones `edger_apply` function.
+First, we’ll just run the bare-bones `edger_multi` function.
 
 <br>
 
 ``` r
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger::edger_apply(c(im1, im2), roi_in = list(roi1), color = "green1")
+edger::edger_multi(c(im1, im2), roi_in = list(roi1), color = "green1")
 ```
-
-![](edger_use_files/figure-gfm/edger_apply%201-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_apply%201-2.png)<!-- -->
 
 <br>
 
@@ -299,11 +299,9 @@ clockwise.
 <br>
 
 ``` r
-edger::edger_apply(c(im1, im2), roi_in = list(roi1), 
+edger::edger_multi(c(im1, im2), roi_in = list(roi1), 
                      shift = c(200, -200), rotate = 30, color = "yellow")
 ```
-
-![](edger_use_files/figure-gfm/edger_apply%202-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_apply%202-2.png)<!-- -->
 
 <br>
 
@@ -333,18 +331,16 @@ roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
 roi2 <- data.frame(x1 = 457, y1 = 501, x2 = 526, y2 = 1105)
 roi3 <- data.frame(x1 = 633, y1 = 638, x2 = 874, y2 = 799)
 
-edger::edger_apply(c(im1, im2), th = c(.1,.05),
+edger::edger_multi(c(im1, im2), th = c(.1,.05),
                    ref_images = 2, regions = 2, 
                    roi_in = list(rbind(roi1, roi2),
                                  roi3), 
                    color = "deeppink1")
 ```
 
-![](edger_use_files/figure-gfm/edger_apply%203-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_apply%203-2.png)<!-- -->
-
 <br>
 
-Cool\! Now we’ve drawn both snow stakes from the first image onto the
+Cool! Now we’ve drawn both snow stakes from the first image onto the
 second image, and we’ve drawn the outlines of that bent-down tree in the
 second image onto the first image. This functionality is useful if you
 have multiple objects of interest but they don’t all appear in the same
@@ -358,11 +354,11 @@ image.
 
 Most cameras are collecting a lot more than 2 images that you’ll have to
 recolor. That can be a lot of processing time. You can speed things up
-by setting the `process` argument of the `edger_apply` function to
-“parallel.” This will call the `parallel` and `furrr` packages and
-allow your computer to process the images across several cores. You’ll
-also have to set the `cores` argument to the number of cores you want it
-to use. It’s generalkly safest to use at least one less than the total
+by setting the `process` argument of the `edger_multi` function to
+“parallel.” This will call the `parallel` and `furrr` packages and allow
+your computer to process the images across several cores. You’ll also
+have to set the `cores` argument to the number of cores you want it to
+use. It’s generalkly safest to use at least one less than the total
 number of cores on your computer, which you can find out using
 `parallel::detectCores()`.
 
@@ -372,9 +368,9 @@ number of cores on your computer, which you can find out using
 
 ### A couple of other tips:
 
-  - Base R’s `list.files` function is very handy for creating a vector
+-   Base R’s `list.files` function is very handy for creating a vector
     of file paths to set as the `images` argument.
-  - Unfortunately, this recoloring process does **not** retain the
+-   Unfortunately, this recoloring process does **not** retain the
     images’ metadata. Future iterations of this package may extract
     metadata from the raw image and attribute it to the recolored one
     during recoloring. For now, please refer to the `exiftoolr`

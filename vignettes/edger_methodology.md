@@ -1,7 +1,7 @@
 edger\_methodology
 ================
 Kaitlyn Strickfaden
-2021-07-01
+2021-11-18
 
 <br>
 
@@ -25,7 +25,7 @@ won’t work quite as well.
 
 <br>
 
------
+------------------------------------------------------------------------
 
 <br>
 
@@ -153,7 +153,7 @@ We’ll also save it as a data frame, because we’ll need it later.
 
 <br>
 
------
+------------------------------------------------------------------------
 
 <br>
 
@@ -197,13 +197,13 @@ roi <- filter(im1_bw,
 
 <br>
 
-`edger_find` and `edger_apply` both allow you to set the number of
+`edger_single` and `edger_multi` both allow you to set the number of
 regions so you can define several regions of interest if you need.
-`edger_apply` even lets you define regions in multiple images\!
+`edger_multi` even lets you define regions in multiple images!
 
 <br>
 
------
+------------------------------------------------------------------------
 
 <br>
 
@@ -249,7 +249,7 @@ plot(im1_new, axes = F)
 
 <br>
 
-Cool\! Now we have the original image with the edges of the measuring
+Cool! Now we have the original image with the edges of the measuring
 stake highlighted. We also know the coordinates of those pixels. Of
 course, this in itself isn’t all that useful; we already know where the
 measuring stake is in this image. But by extracting edges from this
@@ -280,7 +280,7 @@ better results:
 
 ![](edger_methodology_files/figure-gfm/recolor%20image%202-1.png)<!-- -->
 
------
+------------------------------------------------------------------------
 
 <br>
 

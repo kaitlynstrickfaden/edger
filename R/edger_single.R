@@ -22,14 +22,14 @@
 #' @export
 
 
-edger_find <- function(imagepath,
-                       roi_in = NULL,
-                       th = 0.1,
-                       regions = 1,
-                       shift = c(0,0),
-                       rotate = 0,
-                       color = "red",
-                       save = FALSE)
+edger_single <- function(imagepath,
+                         roi_in = NULL,
+                         th = 0.1,
+                         regions = 1,
+                         shift = c(0,0),
+                         rotate = 0,
+                         color = "red",
+                         save = FALSE)
 
 {
 
