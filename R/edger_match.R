@@ -39,22 +39,22 @@ edger_match <- function(imdf,
   colnames(m_df) <- paste0(colnames(m_df), "old")
 
   m_df1 <- m_df %>%
-    mutate(xorigin = xold - x_aor,
-           yorigin = yold - y_aor,
-           xprime = round((xorigin*cos(theta)) - (yorigin*sin(theta)), 0),
-           yprime = round((yorigin*cos(theta)) + (xorigin*sin(theta)), 0),
-           x = xprime + x_aor,
-           y = yprime + y_aor,
-           id = x + ((y - 1) * dim_x)
+    mutate(xorigin = .data$xold - x_aor,
+           yorigin = .data$yold - y_aor,
+           xprime = round((.data$xorigin*cos(theta)) - (.data$yorigin*sin(theta)), 0),
+           yprime = round((.data$yorigin*cos(theta)) + (.data$xorigin*sin(theta)), 0),
+           x = .data$xprime + x_aor,
+           y = .data$yprime + y_aor,
+           id = .data$x + ((.data$y - 1) * dim_x)
            )
 
   m_df2 <- m_df1 %>%
-    mutate(keep = case_when(x + x_shift > dim_x ~ "N",
-                            x + x_shift < 0 ~ "N",
-                            y + y_shift > dim_y ~ "N",
-                            y + y_shift < 0 ~ "N",
+    mutate(keep = case_when(.data$x + x_shift > dim_x ~ "N",
+                            .data$x + x_shift < 0 ~ "N",
+                            .data$y + y_shift > dim_y ~ "N",
+                            .data$y + y_shift < 0 ~ "N",
                             T ~ "Y") ) %>%
-    filter(.data$keep == "Y")
+    filter(keep == "Y")
 
   m <- m_df2$id + x_shift + (y_shift * dim_x)
 

@@ -1,7 +1,7 @@
-edger\_use
+edger_use
 ================
 Kaitlyn Strickfaden
-2021-11-18
+2022-02-14
 
 <br>
 
@@ -45,7 +45,7 @@ Right now, this package includes three functions:
 
 <br>
 
-## edger\_single
+## edger_single
 
 The `edger_single` function takes the file path to an image as an input,
 asks the user to either draw or input a region of interest (**ROI**),
@@ -65,7 +65,7 @@ a few other arguments to allow for more customization though. These are:
     list containing a data frame, and the data frame must contain the
     minimum x, minimum y, maximum x, and maximum y coordinate of the
     ROI. Each ROI must be in its own row of the data frame. It may seem
-    weird that the roi\_in has to be a list of a single data frame, but
+    weird that the roi_in has to be a list of a single data frame, but
     this is just so the object type of `roi_in` is the same whether you
     have one `roi_in` or several (as is possible with `edger_multi`).
 -   `regions`: a numeric input for setting the number of ROIs to draw.
@@ -85,7 +85,7 @@ a few other arguments to allow for more customization though. These are:
     all contexts.
 -   `save`: a Boolean (T/F) indicating if the recolored image should be
     saved. The default is False, but if it is set to True, the recolored
-    image will be saved to the working directory with "\_edger" appended
+    image will be saved to the working directory with “\_edger” appended
     to the original file name.
 
 <br>
@@ -116,7 +116,7 @@ edger::edger_single(im1)
 
 ![](edger_use_files/figure-gfm/edger_single%201-1.png)<!-- -->
 
-    #> Time difference of 4.57 secs
+    #> Time difference of 3.92 secs
 
 <br>
 
@@ -140,7 +140,7 @@ roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
 edger::edger_single(im1, roi_in = list(roi1), th = 0.07, color = "cyan1")
 ```
 
-    #> Time difference of 4.34 secs
+    #> Time difference of 4.12 secs
 
 ![](edger_use_files/figure-gfm/edger_single%202-1.png)<!-- -->
 
@@ -164,7 +164,7 @@ edger::edger_single(im1, roi_in = list(rbind(roi1, roi2)), regions = 2, color = 
 
 ![](edger_use_files/figure-gfm/edger_single%203-1.png)<!-- -->
 
-    #> Time difference of 4.28 secs
+    #> Time difference of 4.04 secs
 
 <br>
 
@@ -172,7 +172,7 @@ edger::edger_single(im1, roi_in = list(rbind(roi1, roi2)), regions = 2, color = 
 
 <br>
 
-## edger\_testr
+## edger_testr
 
 The `edger_testr` function is an extension of the `edger_single`
 function. Rather than input just a single file path, the user can input
@@ -184,12 +184,13 @@ then, the function will ask the user if the `th` used was a good value.
 If the user inputs “Y”, the function will save the ROI coordinates and
 `th` to a list of data frames. If the user inputs “N” (or any other
 value), the interface will ask for a new `th` and rerun the
-`edger_single` function. It will run this same procedure on the shift
-and rotate inputs. It will move on to a new image once a threshold,
-shift, and rotate value have been selected for the current image. Once
-the function has gotten through all of the images in `imagepaths`, the
-`edger_cvdf` function will output a list containing coordinates to ROIs,
-threshold values, shift values, and rotate values.
+`edger_single` function. It will run this same procedure on the rotate
+and shift inputs (default is no rotation or shift). It will move on to a
+new image once a threshold, rotate, and shift value have been selected
+for the current image. Once the function has gotten through all of the
+images in `imagepaths`, the `edger_testr` function will output a list
+containing coordinates to ROIs, threshold values, shift values, and
+rotate values.
 
 <br>
 
@@ -197,7 +198,7 @@ threshold values, shift values, and rotate values.
 
 <br>
 
-## edger\_multi
+## edger_multi
 
 <br>
 
@@ -205,7 +206,7 @@ The final function, the `edger_multi` function, is the workhorse of the
 `edger` package. It allows the user to take the edges he or she found in
 one image and recolor those pixels in a new set of images with any
 shifting or rotation as desired. It will save the recolored images with
-"\_edger" appended to the original file name, so you won’t lose any of
+“\_edger” appended to the original file name, so you won’t lose any of
 your raw images. These are the arguments for the `edger_multi` function:
 
 -   `images`: a vector containing file paths to images. The first image
@@ -280,6 +281,8 @@ roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
 edger::edger_multi(c(im1, im2), roi_in = list(roi1), color = "green1")
 ```
 
+![](edger_use_files/figure-gfm/edger_multi%201-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_multi%201-2.png)<!-- -->
+
 <br>
 
 This function comes with a progress bar, courtesy of the `progressr`
@@ -303,14 +306,14 @@ edger::edger_multi(c(im1, im2), roi_in = list(roi1),
                      shift = c(200, -200), rotate = 30, color = "yellow")
 ```
 
+![](edger_use_files/figure-gfm/edger_multi%202-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_multi%202-2.png)<!-- -->
+
 <br>
 
 Hopefully you can see how this functionality will be very useful if the
-camera viewshed changes partway through the camera’s deployment, though
-it might take a little trial and error to figure out by how many pixels
-to shift and how many degrees to rotate. `edger` won’t throw a fit if
-you shift or rotate any of the pixels outside of the bounds of the
-image; it just won’t recolor them.
+camera viewshed changes partway through the camera’s deployment. `edger`
+won’t throw a fit if you shift or rotate any of the pixels outside of
+the bounds of the image; it just won’t recolor them.
 
 <br>
 
@@ -337,6 +340,8 @@ edger::edger_multi(c(im1, im2), th = c(.1,.05),
                                  roi3), 
                    color = "deeppink1")
 ```
+
+![](edger_use_files/figure-gfm/edger_multi%203-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_multi%203-2.png)<!-- -->
 
 <br>
 

@@ -15,7 +15,7 @@
 #' @import purrr
 #' @param images A vector containing file paths of images to be analyzed. The first image will be the reference image, and edges from the first image will be superimposed onto the other images.
 #' @param ref_images A numeric indicating in how many reference images you want to search for edges. Default is 1. When greater than 1, the first n images will be used.
-#' @param roi_in An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL, input should be a list containing 4-column data frames with a number of rows equal to regions, with one data frame per ref_images. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.
+#' @param roi An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi" is not NULL, input should be a list containing 4-column data frames with a number of rows equal to regions, with one data frame per ref_images. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.
 #' @param th A vector of numeric values between 0-1 for the lowest threshold value you want to recolor in each image(a low threshold value captures weaker contrasts). Default is 0.1.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
 #' @param shift A vector of length 2 containing numerics indicating the amount of shift along the x axis first and the y axis second. Positive values indicate shifts right or up, while negative values indicate shifts left or down. Default is c(0,0).
@@ -32,7 +32,7 @@
 
 edger_multi <- function(images,
                         ref_images = 1,
-                        roi_in = NULL,
+                        roi = NULL,
                         th = 0.1,
                         regions = 1,
                         shift = c(0,0),
@@ -49,10 +49,10 @@ edger_multi <- function(images,
       stop(str_glue("images[", i, "] is not a valid path.", sep = "")) }
   }
 
-  # Check if ref_images matches with roi_in
-  if (is.null(roi_in) == FALSE) {
-    if (ref_images != length(roi_in)) {
-      stop(str_glue("ref_images {ref_images} and length of roi_in {length(roi_in)} do not match."))
+  # Check if ref_images matches with roi
+  if (is.null(roi) == FALSE) {
+    if (ref_images != length(roi)) {
+      stop(str_glue("ref_images {ref_images} and length of roi {length(roi)} do not match."))
     }
   }
 
@@ -77,8 +77,8 @@ edger_multi <- function(images,
 
   ref_ims <- images[1:ref_images]
 
-  roi <- edger_identify(ref_ims = ref_ims,
-                        roi_in = roi_in,
+  ROI <- edger_identify(ref_ims = ref_ims,
+                        roi = roi,
                         th = th,
                         regions = regions)
 

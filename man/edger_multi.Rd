@@ -7,7 +7,7 @@
 edger_multi(
   images,
   ref_images = 1,
-  roi_in = NULL,
+  roi = NULL,
   th = 0.1,
   regions = 1,
   shift = c(0, 0),
@@ -23,7 +23,7 @@ edger_multi(
 
 \item{ref_images}{A numeric indicating in how many reference images you want to search for edges. Default is 1. When greater than 1, the first n images will be used.}
 
-\item{roi_in}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi_in" is not NULL, input should be a list containing 4-column data frames with a number of rows equal to regions, with one data frame per ref_images. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.}
+\item{roi}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi" is not NULL, input should be a list containing 4-column data frames with a number of rows equal to regions, with one data frame per ref_images. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. Note that plotting of images by "imager" starts in the top-left corner.}
 
 \item{th}{A vector of numeric values between 0-1 for the lowest threshold value you want to recolor in each image(a low threshold value captures weaker contrasts). Default is 0.1.}
 

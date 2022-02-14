@@ -56,7 +56,7 @@ edger_testr <- function(imagepaths, regions = 1, color = "red") {
                            x1 = roi_in[3], y1 = roi_in[4])
 
       edger_single(refimage,
-              roi_in = list(roi_in),
+              roi = list(roi_in),
               th = tv,
               shift = shf,
               rotate = rot,
@@ -87,7 +87,7 @@ edger_testr <- function(imagepaths, regions = 1, color = "red") {
 
           tv <- as.numeric(tvnew)
 
-          edger_single(refimage, roi_in = list(roi_in),
+          edger_single(refimage, roi = list(roi_in),
                   th = tv, color = color)
           thdone <- FALSE
         }
@@ -118,7 +118,7 @@ edger_testr <- function(imagepaths, regions = 1, color = "red") {
 
           rot <- as.numeric(ronew)
 
-          edger_single(refimage, roi_in = list(roi_in),
+          edger_single(refimage, roi = list(roi_in),
                      th = tv, shift = shf, rotate = rot, color = color)
           rodone <- FALSE
         }
@@ -162,7 +162,7 @@ edger_testr <- function(imagepaths, regions = 1, color = "red") {
           ysh <- round(as.numeric(ynew))
           shf[2] <- ysh
 
-          edger_single(refimage, roi_in = list(roi_in),
+          edger_single(refimage, roi = list(roi_in),
                      th = tv, shift = shf, color = color)
           shdone <- FALSE
         }

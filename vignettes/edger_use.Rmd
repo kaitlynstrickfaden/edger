@@ -63,7 +63,7 @@ The `edger_single` function takes the file path to an image as an input, asks th
 <br>
 
 - `th`: a numeric input setting the threshold value for determining edges. Generally, this is a value greater than 0 and less than 0.20. Lower values capture weaker edges, and higher values capture stronger edges. The default is 0.10.
-- `roi_in`: an argument for supplying the coordinates of ROIs without having to draw them each time. The default is NULL and will cause the function to launch the user interface for drawing a ROI on the image. If the user decides to input the ROI, it must be input as a list containing a data frame, and the data frame must contain the minimum x, minimum y, maximum x, and maximum y coordinate of the ROI. Each ROI must be in its own row of the data frame. It may seem weird that the roi_in has to be a list of a single data frame, but this is just so the object type of `roi_in` is the same whether you have one `roi_in` or several (as is possible with `edger_multi`). 
+- `roi`: an argument for supplying the coordinates of ROIs without having to draw them each time. The default is NULL and will cause the function to launch the user interface for drawing a ROI on the image. If the user decides to input the ROI, it must be input as a list containing a data frame, and the data frame must contain the minimum x, minimum y, maximum x, and maximum y coordinate of the ROI. Each ROI must be in its own row of the data frame. It may seem weird that `roi` has to be a list of a single data frame, but this is just so the object type of `roi` is the same whether you have one ROI or several (as is possible with `edger_multi`). 
 - `regions`: a numeric input for setting the number of ROIs to draw. The default is 1. If a user has multiple objects in an image but does not want to capture the area between the objects, he or she can increase the value of `regions` to capture each object separately.
 - `shift`: a vector of length 2 for the number of pixels the drawn object should be moved left, right, up, or down. The first value in the pair will be the left-right shift, and the second value will be the up-down shift. The default is no shift (`c(0,0)`).
 - `rotate`: a numeric indicating how many degrees to rotate the recolored pixels. Negative values rotate the pixels counter-clockwise, and positive values rotate the pixels clockwise. The default is 0.
@@ -94,7 +94,7 @@ edger::edger_single(im1)
 
 ```{r edger_single 1, echo = F}
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger_single(im1, roi_in = list(roi1))
+edger_single(im1, roi = list(roi1))
 ```
  
  <br>
@@ -109,11 +109,11 @@ A threshold value of 0.10 looks pretty good for this image, but let's adjust som
 
 ```{r edger_single dummy 2, echo = T, eval = FALSE}
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger::edger_single(im1, roi_in = list(roi1), th = 0.07, color = "cyan1")
+edger::edger_single(im1, roi = list(roi1), th = 0.07, color = "cyan1")
 ```
 
 ```{r edger_single 2, echo = F}
-edger_single(im1, roi_in = list(roi1), th = 0.07, color = "cyan1")
+edger_single(im1, roi = list(roi1), th = 0.07, color = "cyan1")
 rect(roi1[,1], roi1[,2], roi1[,3], roi1[,4], lwd = 2)
 text(x = roi1[,1] - 100, roi1[,2] - 40, labels = str_glue("({roi1[,1]}, {roi1[,2]})"))
 text(x = roi1[,3] + 120, roi1[,4] + 40, labels = str_glue("({roi1[,3]}, {roi1[,4]})"))
@@ -125,13 +125,13 @@ Notice that by decreasing the `th` input, we picked up some weaker edges around 
 
 <br>
 
-If we wanted to recolor the edges of that second measuring stake too, we can do that by increasing the `regions` input and adding another row to our `roi_in` data frame.
+If we wanted to recolor the edges of that second measuring stake too, we can do that by increasing the `regions` input and adding another row to our `roi` data frame.
 
 <br>
 
 ```{r edger_single 3, echo = T}
 roi2 <- data.frame(x1 = 457, y1 = 501, x2 = 526, y2 = 1105)
-edger::edger_single(im1, roi_in = list(rbind(roi1, roi2)), regions = 2, color = "purple")
+edger::edger_single(im1, roi = list(rbind(roi1, roi2)), regions = 2, color = "purple")
 ```
 
 
@@ -143,7 +143,7 @@ edger::edger_single(im1, roi_in = list(rbind(roi1, roi2)), regions = 2, color = 
 
 ## edger_testr
 
-The `edger_testr` function is an extension of the `edger_single` function. Rather than input just a single file path, the user can input a vector containing paths to multiple images to the `imagepaths` argument. The `edger_testr` function launches an interactive interface to the `edger_single` function. It will use the default `th` from the `edger_single` function (0.10) to recolor edges on the first instance; then, the function will ask the user if the `th` used was a good value. If the user inputs "Y", the function will save the ROI coordinates and `th` to a list of data frames. If the user inputs "N" (or any other value), the interface will ask for a new `th` and rerun the `edger_single` function. It will run this same procedure on the shift and rotate inputs. It will move on to a new image once a threshold, shift, and rotate value have been selected for the current image. Once the function has gotten through all of the images in `imagepaths`, the `edger_cvdf` function will output a list containing coordinates to ROIs, threshold values, shift values, and rotate values.
+The `edger_testr` function is an extension of the `edger_single` function. Rather than input just a single file path, the user can input a vector containing paths to multiple images to the `imagepaths` argument. The `edger_testr` function launches an interactive interface to the `edger_single` function. It will use the default `th` from the `edger_single` function (0.10) to recolor edges on the first instance; then, the function will ask the user if the `th` used was a good value. If the user inputs "Y", the function will save the ROI coordinates and `th` to a list of data frames. If the user inputs "N" (or any other value), the interface will ask for a new `th` and rerun the `edger_single` function. It will run this same procedure on the rotate and shift inputs (default is no rotation or shift). It will move on to a new image once a threshold, rotate, and shift value have been selected for the current image. Once the function has gotten through all of the images in `imagepaths`, the `edger_testr` function will output a list containing coordinates to ROIs, threshold values, shift values, and rotate values.
 
 <br>
 
@@ -159,7 +159,7 @@ The final function, the `edger_multi` function, is the workhorse of the `edger` 
 
 - `images`: a vector containing file paths to images. The first image is referred to as the "reference" image; this is the image in which edges will be found that will then be drawn on to the rest of the images. If `ref_images` is greater than 1, then the function will use *n* images as the reference images.
 - `ref_images`: a numeric input for the number of reference images to be used. The default is one. 
-- `roi_in`: an argument for supplying the coordinates of ROIs without having to draw them each time. The default is NULL and will cause the function to launch the user interface for drawing a ROI on the image. If the user decides to input the ROI, it must be input as a list containing a data frame for each reference image, and each data frame must contain the minimum x, minimum y, maximum x, and maximum y coordinate of the ROI. Each ROI must be in its own row of the data frame.
+- `roi`: an argument for supplying the coordinates of ROIs without having to draw them each time. The default is NULL and will cause the function to launch the user interface for drawing a ROI on the image. If the user decides to input the ROI, it must be input as a list containing a data frame for each reference image, and each data frame must contain the minimum x, minimum y, maximum x, and maximum y coordinate of the ROI. Each ROI must be in its own row of the data frame.
 - `th`: a numeric input setting the threshold value for determining edges. Generally, this is a value greater than 0 and less than 0.20. Lower values capture weaker edges, and higher values capture stronger edges. The default is 0.10.
 - `regions`: a numeric input for setting the number of ROIs to draw. The default is 1. If a user has multiple objects in an image but does not want to capture the area between the objects, he or she can increase the value of `regions` to capture each object separately.
 - `shift`: a vector of length 2 for the number of pixels the drawn object should be moved left, right, up, or down. The first value in the pair will be the left-right shift, and the second value will be the up-down shift. The default is no shift (`c(0,0)`).
@@ -192,7 +192,7 @@ First, we'll just run the bare-bones `edger_multi` function.
 
 ```{r edger_multi 1, echo = T, eval = TRUE}
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger::edger_multi(c(im1, im2), roi_in = list(roi1), color = "green1")
+edger::edger_multi(c(im1, im2), roi = list(roi1), color = "green1")
 ```
 
 
@@ -207,14 +207,14 @@ Now let's shift and rotate the recolored pixels. The `shift` input acts like a c
 <br>
 
 ```{r edger_multi 2, echo = T, eval = TRUE}
-edger::edger_multi(c(im1, im2), roi_in = list(roi1), 
+edger::edger_multi(c(im1, im2), roi = list(roi1), 
                      shift = c(200, -200), rotate = 30, color = "yellow")
 ```
 
 
 <br>
 
-Hopefully you can see how this functionality will be very useful if the camera viewshed changes partway through the camera's deployment, though it might take a little trial and error to figure out by how many pixels to shift and how many degrees to rotate. `edger` won't throw a fit if you shift or rotate any of the pixels outside of the bounds of the image; it just won't recolor them.
+Hopefully you can see how this functionality will be very useful if the camera viewshed changes partway through the camera's deployment. `edger` won't throw a fit if you shift or rotate any of the pixels outside of the bounds of the image; it just won't recolor them.
 
 <br>
 
@@ -229,7 +229,7 @@ roi3 <- data.frame(x1 = 633, y1 = 638, x2 = 874, y2 = 799)
 
 edger::edger_multi(c(im1, im2), th = c(.1,.05),
                    ref_images = 2, regions = 2, 
-                   roi_in = list(rbind(roi1, roi2),
+                   roi = list(rbind(roi1, roi2),
                                  roi3), 
                    color = "deeppink1")
 ```
