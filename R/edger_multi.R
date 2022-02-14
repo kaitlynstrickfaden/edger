@@ -87,7 +87,7 @@ edger_multi <- function(images,
   im1_df <- edger_im_to_df(im1)
 
   m <- edger_match(imdf = im1_df,
-                   roi = roi,
+                   roi = ROI,
                    shift = shift,
                    rotate = rotate)
 
