@@ -248,17 +248,3 @@ Cool! Now we've drawn both snow stakes from the first image onto the second imag
 Most cameras are collecting a lot more than 2 images that you'll have to recolor. That can be a lot of processing time. You can speed things up by setting the `process` argument of the `edger_multi` function to "parallel." This will call the `parallel` and `furrr` packages and allow your computer to process the images across several cores. You'll also have to set the `cores` argument to the number of cores you want it to use. It's generalkly safest to use at least one less than the total number of cores on your computer, which you can find out using `parallel::detectCores()`.
 
 <br>
-
-<br>
-
-### A couple of other tips:
-
-- Base R's `list.files` function is very handy for creating a vector of file paths to set as the `images` argument.
-- Unfortunately, this recoloring process does **not** retain the images' metadata. Future iterations of this package may extract metadata from the raw image and attribute it to the recolored one during recoloring. For now, please refer to the `exiftoolr` [package](https://github.com/JoshOBrien/exiftoolr]) for extracting metadata from your raw images.
-
-<br>
-
-
-
-
-

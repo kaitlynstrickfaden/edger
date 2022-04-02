@@ -2,45 +2,21 @@
 
 #' Extract and Reattribute Metadata
 #'
-#' Attribute metadata from original images to recolored images. Doesn't work yet...
+#' Attribute metadata from original image to recolored image. Requires that exiftool is installed on your machine and is in your environmental variables.
 #'
 #' @import exiftoolr
-#' @import stringr
-#' @param imagepaths The file path to the original image
-#' @param tags The Exiftool tags for metadata to extract. The default is all tags.
-#' @return Metadata attributed to the recolored images.
+#' @importFrom stringr str_glue
+#' @param imagepath The file path to the original image
+#' @return Recolored image with metadata tags from original image
 #' @export
 
 
-edger_meta <- function(imagepaths, tags)
+edger_meta <- function(imagepath) {
 
-{
+  # Check if file path is valid
+  if (file.exists(imagepath) == FALSE) {
+    stop(str_glue("{imagepath} is not a valid path.", sep = "")) }
 
-  st <- Sys.time()
-
-  for (i in seq_along(imagepaths)) {
-
-    # Check if file paths are valid
-    if (file.exists(imagepaths[i]) == FALSE) {
-      stop(str_glue("{imagepaths[i]} is not a valid path.", sep = "")) }
-
-    meta <- exif_read(imagepaths[i])
-
-    if ("DateTimeOriginal" %in% colnames(meta)) {
-      meta$DateTimeOriginal <- str_replace_all(meta$DateTimeOriginal, " ", "_")
-    }
-
-    if ("CreateDate" %in% colnames(meta)) {
-      meta$CreateDate <- str_replace_all(meta$CreateDate, " ", "_")
-    }
-
-    metavals <- str_c("-", colnames(meta), "=", meta[1,], sep = "")
-
-    exif_call(args =  c("-n", "-j", "-q", metavals[-c(1:3)]),
-                  path = edger_name(imagepaths[i]), quiet = F)
-
-}
-
-  round(Sys.time() - st, 2)
+  system2("exiftool", str_glue("-exif:all= -tagsfromfile {imagepath} -all:all {edger_name(imagepath)}"), stdout = TRUE)
 
 } # End of function

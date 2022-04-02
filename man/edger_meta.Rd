@@ -4,16 +4,14 @@
 \alias{edger_meta}
 \title{Extract and Reattribute Metadata}
 \usage{
-edger_meta(imagepaths, tags)
+edger_meta(imagepath)
 }
 \arguments{
-\item{imagepaths}{The file path to the original image}
-
-\item{tags}{The Exiftool tags for metadata to extract. The default is all tags.}
+\item{imagepath}{The file path to the original image}
 }
 \value{
-Metadata attributed to the recolored images.
+Recolored image with metadata tags from original image
 }
 \description{
-Attribute metadata from original images to recolored images. Doesn't work yet...
+Attribute metadata from original image to recolored image. Requires that exiftool is installed on your machine and is in your environmental variables.
 }

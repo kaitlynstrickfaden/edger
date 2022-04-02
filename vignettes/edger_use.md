@@ -1,7 +1,7 @@
 edger_use
 ================
 Kaitlyn Strickfaden
-2022-02-14
+2022-04-01
 
 <br>
 
@@ -58,16 +58,16 @@ a few other arguments to allow for more customization though. These are:
     edges. Generally, this is a value greater than 0 and less than 0.20.
     Lower values capture weaker edges, and higher values capture
     stronger edges. The default is 0.10.
--   `roi_in`: an argument for supplying the coordinates of ROIs without
+-   `roi`: an argument for supplying the coordinates of ROIs without
     having to draw them each time. The default is NULL and will cause
     the function to launch the user interface for drawing a ROI on the
     image. If the user decides to input the ROI, it must be input as a
     list containing a data frame, and the data frame must contain the
     minimum x, minimum y, maximum x, and maximum y coordinate of the
     ROI. Each ROI must be in its own row of the data frame. It may seem
-    weird that the roi_in has to be a list of a single data frame, but
-    this is just so the object type of `roi_in` is the same whether you
-    have one `roi_in` or several (as is possible with `edger_multi`).
+    weird that `roi` has to be a list of a single data frame, but this
+    is just so the object type of `roi` is the same whether you have one
+    ROI or several (as is possible with `edger_multi`).
 -   `regions`: a numeric input for setting the number of ROIs to draw.
     The default is 1. If a user has multiple objects in an image but
     does not want to capture the area between the objects, he or she can
@@ -116,7 +116,7 @@ edger::edger_single(im1)
 
 ![](edger_use_files/figure-gfm/edger_single%201-1.png)<!-- -->
 
-    #> Time difference of 3.92 secs
+    #> Time difference of 3.93 secs
 
 <br>
 
@@ -137,10 +137,10 @@ correctly.
 
 ``` r
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger::edger_single(im1, roi_in = list(roi1), th = 0.07, color = "cyan1")
+edger::edger_single(im1, roi = list(roi1), th = 0.07, color = "cyan1")
 ```
 
-    #> Time difference of 4.12 secs
+    #> Time difference of 3.95 secs
 
 ![](edger_use_files/figure-gfm/edger_single%202-1.png)<!-- -->
 
@@ -153,18 +153,18 @@ around the measuring stake.
 
 If we wanted to recolor the edges of that second measuring stake too, we
 can do that by increasing the `regions` input and adding another row to
-our `roi_in` data frame.
+our `roi` data frame.
 
 <br>
 
 ``` r
 roi2 <- data.frame(x1 = 457, y1 = 501, x2 = 526, y2 = 1105)
-edger::edger_single(im1, roi_in = list(rbind(roi1, roi2)), regions = 2, color = "purple")
+edger::edger_single(im1, roi = list(rbind(roi1, roi2)), regions = 2, color = "purple")
 ```
 
 ![](edger_use_files/figure-gfm/edger_single%203-1.png)<!-- -->
 
-    #> Time difference of 4.04 secs
+    #> Time difference of 3.81 secs
 
 <br>
 
@@ -216,7 +216,7 @@ your raw images. These are the arguments for the `edger_multi` function:
     use *n* images as the reference images.
 -   `ref_images`: a numeric input for the number of reference images to
     be used. The default is one.
--   `roi_in`: an argument for supplying the coordinates of ROIs without
+-   `roi`: an argument for supplying the coordinates of ROIs without
     having to draw them each time. The default is NULL and will cause
     the function to launch the user interface for drawing a ROI on the
     image. If the user decides to input the ROI, it must be input as a
@@ -278,10 +278,17 @@ First, we’ll just run the bare-bones `edger_multi` function.
 
 ``` r
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger::edger_multi(c(im1, im2), roi_in = list(roi1), color = "green1")
+edger::edger_multi(c(im1, im2), roi = list(roi1), color = "green1")
+#> Recoloring images...
 ```
 
-![](edger_use_files/figure-gfm/edger_multi%201-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_multi%201-2.png)<!-- -->
+![](edger_use_files/figure-gfm/edger_multi%201-1.png)<!-- -->
+
+    #> Attributing metadata...
+
+![](edger_use_files/figure-gfm/edger_multi%201-2.png)<!-- -->
+
+    #> Time difference of 16.62513 secs
 
 <br>
 
@@ -302,11 +309,18 @@ clockwise.
 <br>
 
 ``` r
-edger::edger_multi(c(im1, im2), roi_in = list(roi1), 
+edger::edger_multi(c(im1, im2), roi = list(roi1), 
                      shift = c(200, -200), rotate = 30, color = "yellow")
+#> Recoloring images...
 ```
 
-![](edger_use_files/figure-gfm/edger_multi%202-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_multi%202-2.png)<!-- -->
+![](edger_use_files/figure-gfm/edger_multi%202-1.png)<!-- -->
+
+    #> Attributing metadata...
+
+![](edger_use_files/figure-gfm/edger_multi%202-2.png)<!-- -->
+
+    #> Time difference of 16.02599 secs
 
 <br>
 
@@ -336,12 +350,19 @@ roi3 <- data.frame(x1 = 633, y1 = 638, x2 = 874, y2 = 799)
 
 edger::edger_multi(c(im1, im2), th = c(.1,.05),
                    ref_images = 2, regions = 2, 
-                   roi_in = list(rbind(roi1, roi2),
+                   roi = list(rbind(roi1, roi2),
                                  roi3), 
                    color = "deeppink1")
+#> Recoloring images...
 ```
 
-![](edger_use_files/figure-gfm/edger_multi%203-1.png)<!-- -->![](edger_use_files/figure-gfm/edger_multi%203-2.png)<!-- -->
+![](edger_use_files/figure-gfm/edger_multi%203-1.png)<!-- -->
+
+    #> Attributing metadata...
+
+![](edger_use_files/figure-gfm/edger_multi%203-2.png)<!-- -->
+
+    #> Time difference of 16.9341 secs
 
 <br>
 
@@ -366,20 +387,5 @@ have to set the `cores` argument to the number of cores you want it to
 use. It’s generalkly safest to use at least one less than the total
 number of cores on your computer, which you can find out using
 `parallel::detectCores()`.
-
-<br>
-
-<br>
-
-### A couple of other tips:
-
--   Base R’s `list.files` function is very handy for creating a vector
-    of file paths to set as the `images` argument.
--   Unfortunately, this recoloring process does **not** retain the
-    images’ metadata. Future iterations of this package may extract
-    metadata from the raw image and attribute it to the recolored one
-    during recoloring. For now, please refer to the `exiftoolr`
-    [package](https://github.com/JoshOBrien/exiftoolr%5D) for extracting
-    metadata from your raw images.
 
 <br>

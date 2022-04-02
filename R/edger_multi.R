@@ -43,6 +43,8 @@ edger_multi <- function(images,
                         cores = 1)
 {
 
+  st <- Sys.time()
+
   # Check if file paths are valid
   for (i in seq_along(images)) {
     if (file.exists(images[i]) == FALSE) {
@@ -70,8 +72,6 @@ edger_multi <- function(images,
   if (any(th <= 0)) {
     stop("th must be a vector of positive non-zero numbers.")
   }
-
-
 
   rgbcolor <- as.vector(grDevices::col2rgb(color)/255)
 
@@ -104,6 +104,8 @@ edger_multi <- function(images,
 
   if (process == "sequential") {
 
+    message("Recoloring images...")
+
     with_progress({
       p <- progressor(steps = length(images[-1]))
 
@@ -113,16 +115,18 @@ edger_multi <- function(images,
                       m = m,
                       rgbcolor = rgbcolor,
                       show_image = show_image)
-
       })
+
     })
 
   }
 
   if (process == "parallel") {
 
-    plan(multiprocess, workers = cores)
+    plan(multisession, workers = cores)
     options(future.rng.onMisuse = "ignore")
+
+    message("Recoloring images...")
 
     with_progress({
       p <- progressor(steps = length(images[-1]))
@@ -133,25 +137,23 @@ edger_multi <- function(images,
                       m = m,
                       rgbcolor = rgbcolor,
                       show_image = show_image)
-
       })
+
     })
 
   }
 
+  message("Attributing metadata...")
+
+  with_progress({
+    p <- progressor(steps = length(images))
+
+    purrr::map_chr(images, ~{
+      p()
+      edger_meta(.)
+    })
+  })
+
+  Sys.time() - st
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

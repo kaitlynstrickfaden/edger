@@ -74,6 +74,7 @@ edger_single <- function(imagepath,
 
     im_newname <- edger_name(imagepath)
     edger_save(im_new, im_newname)
+    edger_meta(imagepath)
 
   } # End of save == TRUE
 

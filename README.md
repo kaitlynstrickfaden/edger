@@ -11,6 +11,9 @@ install.packages(c("devtools", "dplyr", "imager", "progressr", "stringr"))
 
 ```
 
+You also need to download ExifTool and list it in your environmental variables. You can download ExifTool for your system [here](https://exiftool.org/install.html). Check to see if your computer can navigate to it by typing running the command `exiftool` in the command prompt on your machine. 
+
+
 ### Installing
 
 When installing `edger`, specify `build_vignettes = TRUE`.
@@ -28,7 +31,7 @@ There are three main functions in the `edger` package. These are:
 * `edger_multi`: a function for applying edges to multiple images. This function builds on the `edger_single` function by applying the edges found in the first image(s) to other images. It also saves the recolored images with "edger" appended to the original file name.
 * `edger_testr`: an interactive function to help you find the right threshold, shift, and rotation values for a series of input images. The coordinates to the drawn region(s) of interest and values are compiled and output as a list to then be used as inputs to the `edger_multi` function.
 
-The rest of the functions in the package are helper functions that feed into the main wrapper functions.
+The rest of the functions in the package are helper functions that feed into the main wrapper functions. 
 
 
 
@@ -39,7 +42,8 @@ For a detailed description of the methodology behind the functions, refer to the
 * The method behind these functions relies on good contrast between the object you want to extract and the background. If your images are overexposed or underexposed, or if the object is the same color as the background, then the functions might not work.
 * For the functions to work as intended, all of your images must be the same size. Your newly-saved files will be the same size as the original files.
 * Recolored images will have "edger" added at the end of the file name - the package will not overwrite your raw images.
-* When the images are recolored, they no longer have their metadata. I personally used the `exiftoolr` package to extract the metadata I needed from the raw images. Then you can use one of `dplyr`'s `join` functions to associate the metadata with the correct image. I've written a function to integrate `exiftoolr` into the `edger` package to cut this step out for the user, but it isn't working properly yet.
+* The metadata from the original images is attributed to the recolored images using ExifTool.
+
 
 ## Contributing
 
