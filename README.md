@@ -11,7 +11,7 @@ install.packages(c("devtools", "dplyr", "imager", "progressr", "stringr"))
 
 ```
 
-You also need to download ExifTool and list it in your environmental variables. You can download ExifTool for your system [here](https://exiftool.org/install.html). Check to see if your computer can navigate to it by typing running the command `exiftool` in the command prompt on your machine. 
+You also need to download ExifTool and list it in your environmental variables. You can download ExifTool for your system [here](https://exiftool.org/install.html). Check to see if your computer can navigate to it by running the command `exiftool` in the command prompt on your machine. 
 
 
 ### Installing
@@ -42,7 +42,7 @@ For a detailed description of the methodology behind the functions, refer to the
 * The method behind these functions relies on good contrast between the object you want to extract and the background. If your images are overexposed or underexposed, or if the object is the same color as the background, then the functions might not work.
 * For the functions to work as intended, all of your images must be the same size. Your newly-saved files will be the same size as the original files.
 * Recolored images will have "edger" added at the end of the file name - the package will not overwrite your raw images.
-* The metadata from the original images is attributed to the recolored images using ExifTool.
+* The metadata from the original images is now attributed to the recolored images using ExifTool. 
 
 
 ## Contributing

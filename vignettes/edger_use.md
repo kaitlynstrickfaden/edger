@@ -1,7 +1,7 @@
 edger_use
 ================
 Kaitlyn Strickfaden
-2022-04-01
+2022-04-04
 
 <br>
 
@@ -116,7 +116,7 @@ edger::edger_single(im1)
 
 ![](edger_use_files/figure-gfm/edger_single%201-1.png)<!-- -->
 
-    #> Time difference of 3.93 secs
+    #> Time difference of 4.72 secs
 
 <br>
 
@@ -140,7 +140,7 @@ roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
 edger::edger_single(im1, roi = list(roi1), th = 0.07, color = "cyan1")
 ```
 
-    #> Time difference of 3.95 secs
+    #> Time difference of 4.67 secs
 
 ![](edger_use_files/figure-gfm/edger_single%202-1.png)<!-- -->
 
@@ -164,7 +164,7 @@ edger::edger_single(im1, roi = list(rbind(roi1, roi2)), regions = 2, color = "pu
 
 ![](edger_use_files/figure-gfm/edger_single%203-1.png)<!-- -->
 
-    #> Time difference of 3.81 secs
+    #> Time difference of 4.23 secs
 
 <br>
 
@@ -288,7 +288,7 @@ edger::edger_multi(c(im1, im2), roi = list(roi1), color = "green1")
 
 ![](edger_use_files/figure-gfm/edger_multi%201-2.png)<!-- -->
 
-    #> Time difference of 16.62513 secs
+    #> Time difference of 18.73004 secs
 
 <br>
 
@@ -320,7 +320,7 @@ edger::edger_multi(c(im1, im2), roi = list(roi1),
 
 ![](edger_use_files/figure-gfm/edger_multi%202-2.png)<!-- -->
 
-    #> Time difference of 16.02599 secs
+    #> Time difference of 17.72306 secs
 
 <br>
 
@@ -362,7 +362,7 @@ edger::edger_multi(c(im1, im2), th = c(.1,.05),
 
 ![](edger_use_files/figure-gfm/edger_multi%203-2.png)<!-- -->
 
-    #> Time difference of 16.9341 secs
+    #> Time difference of 19.50344 secs
 
 <br>
 

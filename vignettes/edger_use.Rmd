@@ -184,6 +184,129 @@ im2 <- "../images/image04.jpg"
 im3 <- "../images/image05.jpg"
 ```
 
+```{r multi function, echo = F}
+
+# multi function inherent to edger makes Markdown unhappy because it prints an extra message associated with metadata attribution.
+
+edger_multi <- function(images,
+                        ref_images = 1,
+                        roi = NULL,
+                        th = 0.1,
+                        regions = 1,
+                        shift = c(0,0),
+                        rotate = 0,
+                        color = "red",
+                        show_image = TRUE,
+                        process = "sequential",
+                        cores = 1)
+{
+
+  st <- Sys.time()
+
+  # Check if file paths are valid
+  for (i in seq_along(images)) {
+    if (file.exists(images[i]) == FALSE) {
+      stop(str_glue("images[", i, "] is not a valid path.", sep = "")) }
+  }
+
+  # Check if ref_images matches with roi
+  if (is.null(roi) == FALSE) {
+    if (ref_images != length(roi)) {
+      stop(str_glue("ref_images {ref_images} and length of roi {length(roi)} do not match."))
+    }
+  }
+
+  # Check if color is a character
+  if (is.character(color) == FALSE) {
+    stop("color must be a character string.")
+  }
+
+  # Check if shift is a coordinate pair
+  if (is.numeric(shift) == FALSE | length(shift) != 2) {
+    stop("shift must be a numeric vector of length 2.")
+  }
+
+  # Check if threshold value is valid
+  if (any(th <= 0)) {
+    stop("th must be a vector of positive non-zero numbers.")
+  }
+
+
+  rgbcolor <- as.vector(grDevices::col2rgb(color)/255)
+
+  ref_ims <- images[1:ref_images]
+
+  ROI <- edger_identify(ref_ims = ref_ims,
+                        roi = roi,
+                        th = th,
+                        regions = regions)
+
+
+  im1 <- imager::load.image(images[1])
+  im1_df <- edger_im_to_df(im1)
+
+  m <- edger_match(imdf = im1_df,
+                   roi = ROI,
+                   shift = shift,
+                   rotate = rotate)
+
+  im1_new <- edger_recolor(imdf = im1_df,
+                           m = m,
+                           rgbcolor = rgbcolor,
+                           show = TRUE)
+
+  im1_newname <- edger_name(images[1])
+
+  edger_save(im1_new, im1_newname)
+
+
+
+  if (process == "sequential") {
+
+    message("Recoloring images...")
+
+    with_progress({
+      p <- progressor(steps = length(images[-1]))
+
+      purrr::map_chr(images[-1], ~{
+        p()
+        edger_overlay(.,
+                      m = m,
+                      rgbcolor = rgbcolor,
+                      show_image = show_image)
+      })
+
+    })
+
+  }
+
+  if (process == "parallel") {
+
+    plan(multisession, workers = cores)
+    options(future.rng.onMisuse = "ignore")
+
+    message("Recoloring images...")
+
+    with_progress({
+      p <- progressor(steps = length(images[-1]))
+
+      furrr::future_map_chr(images[-1], ~{
+        p()
+        edger_overlay(.,
+                      m = m,
+                      rgbcolor = rgbcolor,
+                      show_image = show_image)
+      })
+
+    })
+
+  }
+  
+  Sys.time() - st
+  
+}
+```
+
 <br>
 
 First, we'll just run the bare-bones `edger_multi` function.

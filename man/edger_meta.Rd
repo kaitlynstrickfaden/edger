@@ -7,11 +7,11 @@
 edger_meta(imagepath)
 }
 \arguments{
-\item{imagepath}{The file path to the original image}
+\item{imagepath}{The file path to the original image. Original and recolored image must be in the same directory.}
 }
 \value{
 Recolored image with metadata tags from original image
 }
 \description{
-Attribute metadata from original image to recolored image. Requires that exiftool is installed on your machine and is in your environmental variables.
+Attribute metadata from original image to recolored image. Requires that ExifTool is installed on your machine and is in your environmental variables.
 }

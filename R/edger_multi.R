@@ -45,6 +45,12 @@ edger_multi <- function(images,
 
   st <- Sys.time()
 
+
+  # Check if ExifTool is installed
+  if (invisible(system2("where", "exiftool")) == 1) {
+    stop("Could not find installation of ExifTool.")
+  }
+
   # Check if file paths are valid
   for (i in seq_along(images)) {
     if (file.exists(images[i]) == FALSE) {
@@ -72,6 +78,7 @@ edger_multi <- function(images,
   if (any(th <= 0)) {
     stop("th must be a vector of positive non-zero numbers.")
   }
+
 
   rgbcolor <- as.vector(grDevices::col2rgb(color)/255)
 

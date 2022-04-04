@@ -72,6 +72,10 @@ edger_single <- function(imagepath,
 
   if (save == TRUE) {
 
+    if (invisible(system2("where", "exiftool")) == 1) {
+      stop("Could not find installation of ExifTool.")
+    }
+
     im_newname <- edger_name(imagepath)
     edger_save(im_new, im_newname)
     edger_meta(imagepath)

@@ -2,21 +2,26 @@
 
 #' Extract and Reattribute Metadata
 #'
-#' Attribute metadata from original image to recolored image. Requires that exiftool is installed on your machine and is in your environmental variables.
+#' Attribute metadata from original image to recolored image. Requires that ExifTool is installed on your machine and is in your environmental variables.
 #'
-#' @import exiftoolr
 #' @importFrom stringr str_glue
-#' @param imagepath The file path to the original image
+#' @param imagepath The file path to the original image. Original and recolored image must be in the same directory.
 #' @return Recolored image with metadata tags from original image
 #' @export
 
 
 edger_meta <- function(imagepath) {
 
+  # Check if ExifTool is installed
+  if (invisible(system2("where", "exiftool")) == 1) {
+    stop("Could not find installation of ExifTool.")
+  }
+
   # Check if file path is valid
   if (file.exists(imagepath) == FALSE) {
     stop(str_glue("{imagepath} is not a valid path.", sep = "")) }
 
-  system2("exiftool", str_glue("-exif:all= -tagsfromfile {imagepath} -all:all {edger_name(imagepath)}"), stdout = TRUE)
+  invisible(system2("exiftool", str_glue("-exif:all= -tagsfromfile {imagepath} -all:all -overwrite_original {edger_name(imagepath)}")))
+  invisible(system2("exiftool", str_glue("-delete_original! {edger_name(imagepath)}")))
 
 } # End of function
