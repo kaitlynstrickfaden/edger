@@ -1,7 +1,7 @@
 edger_use
 ================
 Kaitlyn Strickfaden
-2022-04-04
+2022-05-03
 
 <br>
 
@@ -54,10 +54,10 @@ a few other arguments to allow for more customization though. These are:
 
 <br>
 
--   `th`: a numeric input setting the threshold value for determining
-    edges. Generally, this is a value greater than 0 and less than 0.20.
-    Lower values capture weaker edges, and higher values capture
-    stronger edges. The default is 0.10.
+-   `th`: a numeric input between 1-100 that sets the threshold value
+    for determining edges. Lower values capture weaker edges, and higher
+    values capture stronger edges. The default is 20. This value is
+    usually between 10-40.
 -   `roi`: an argument for supplying the coordinates of ROIs without
     having to draw them each time. The default is NULL and will cause
     the function to launch the user interface for drawing a ROI on the
@@ -116,7 +116,7 @@ edger::edger_single(im1)
 
 ![](edger_use_files/figure-gfm/edger_single%201-1.png)<!-- -->
 
-    #> Time difference of 4.72 secs
+    #> Time difference of 4.37 secs
 
 <br>
 
@@ -125,7 +125,7 @@ took for the function to run.
 
 <br>
 
-A threshold value of 0.10 looks pretty good for this image, but let’s
+A threshold value of 20 looks pretty good for this image, but let’s
 adjust some of the inputs and try again just to see what happens. We’ll
 also set the ROI externally. When `imager` plots an image, it starts by
 plotting the top-left corner and then working its way right and then
@@ -137,10 +137,10 @@ correctly.
 
 ``` r
 roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
-edger::edger_single(im1, roi = list(roi1), th = 0.07, color = "cyan1")
+edger::edger_single(im1, roi = list(roi1), th = 10, color = "cyan1")
 ```
 
-    #> Time difference of 4.67 secs
+    #> Time difference of 3.97 secs
 
 ![](edger_use_files/figure-gfm/edger_single%202-1.png)<!-- -->
 
@@ -164,7 +164,7 @@ edger::edger_single(im1, roi = list(rbind(roi1, roi2)), regions = 2, color = "pu
 
 ![](edger_use_files/figure-gfm/edger_single%203-1.png)<!-- -->
 
-    #> Time difference of 4.23 secs
+    #> Time difference of 3.98 secs
 
 <br>
 
@@ -179,7 +179,7 @@ function. Rather than input just a single file path, the user can input
 a vector containing paths to multiple images to the `imagepaths`
 argument. The `edger_testr` function launches an interactive interface
 to the `edger_single` function. It will use the default `th` from the
-`edger_single` function (0.10) to recolor edges on the first instance;
+`edger_single` function (20) to recolor edges on the first instance;
 then, the function will ask the user if the `th` used was a good value.
 If the user inputs “Y”, the function will save the ROI coordinates and
 `th` to a list of data frames. If the user inputs “N” (or any other
@@ -224,10 +224,10 @@ your raw images. These are the arguments for the `edger_multi` function:
     frame must contain the minimum x, minimum y, maximum x, and maximum
     y coordinate of the ROI. Each ROI must be in its own row of the data
     frame.
--   `th`: a numeric input setting the threshold value for determining
-    edges. Generally, this is a value greater than 0 and less than 0.20.
-    Lower values capture weaker edges, and higher values capture
-    stronger edges. The default is 0.10.
+-   `th`: a numeric input between 1-100 that sets the threshold value
+    for determining edges. Lower values capture weaker edges, and higher
+    values capture stronger edges. The default is 20. This value is
+    usually between 10-40.
 -   `regions`: a numeric input for setting the number of ROIs to draw.
     The default is 1. If a user has multiple objects in an image but
     does not want to capture the area between the objects, he or she can
@@ -288,7 +288,7 @@ edger::edger_multi(c(im1, im2), roi = list(roi1), color = "green1")
 
 ![](edger_use_files/figure-gfm/edger_multi%201-2.png)<!-- -->
 
-    #> Time difference of 18.73004 secs
+    #> Time difference of 17.43226 secs
 
 <br>
 
@@ -320,7 +320,7 @@ edger::edger_multi(c(im1, im2), roi = list(roi1),
 
 ![](edger_use_files/figure-gfm/edger_multi%202-2.png)<!-- -->
 
-    #> Time difference of 17.72306 secs
+    #> Time difference of 17.41366 secs
 
 <br>
 
@@ -348,7 +348,7 @@ roi1 <- data.frame(x1 = 894, y1 = 538, x2 = 974, y2 = 1219)
 roi2 <- data.frame(x1 = 457, y1 = 501, x2 = 526, y2 = 1105)
 roi3 <- data.frame(x1 = 633, y1 = 638, x2 = 874, y2 = 799)
 
-edger::edger_multi(c(im1, im2), th = c(.1,.05),
+edger::edger_multi(c(im1, im2), th = c(20, 10),
                    ref_images = 2, regions = 2, 
                    roi = list(rbind(roi1, roi2),
                                  roi3), 
@@ -362,7 +362,7 @@ edger::edger_multi(c(im1, im2), th = c(.1,.05),
 
 ![](edger_use_files/figure-gfm/edger_multi%203-2.png)<!-- -->
 
-    #> Time difference of 19.50344 secs
+    #> Time difference of 22.86916 secs
 
 <br>
 
@@ -384,7 +384,7 @@ by setting the `process` argument of the `edger_multi` function to
 “parallel.” This will call the `parallel` and `furrr` packages and allow
 your computer to process the images across several cores. You’ll also
 have to set the `cores` argument to the number of cores you want it to
-use. It’s generalkly safest to use at least one less than the total
+use. It’s generally safest to use at least one less than the total
 number of cores on your computer, which you can find out using
 `parallel::detectCores()`.
 

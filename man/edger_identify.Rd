@@ -4,14 +4,14 @@
 \alias{edger_identify}
 \title{Find Edges in the Region of Interest}
 \usage{
-edger_identify(ref_ims, roi = NULL, th = 0.1, regions = 1)
+edger_identify(ref_ims, roi = NULL, th = 20, regions = 1)
 }
 \arguments{
 \item{ref_ims}{A vector containing file paths of images in which the region(s) of interest will be defined.}
 
 \item{roi}{An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi" is not NULL and ref_images = 1, input should be a 4-column data frame with a number of rows equal to regions. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. If "roi" is not NULL and ref_images > 1, input should be a list of length ref_images, and each item of the list should be a separate 4-column data frame for the region(s) of interest in each image. Note that plotting of images by "imager" starts in the top-left corner.}
 
-\item{th}{A vector of numeric values between 0-1 for the lowest threshold value you want to recolor in each image(a low edge value captures weaker contrasts). Default is 0.1.}
+\item{th}{A vector of numeric values between 1-100 for the lowest threshold value you want to recolor in each image(a low edge value captures weaker contrasts). Default is 20.}
 
 \item{regions}{A numeric indicating how many regions to draw. Default is 1.}
 }

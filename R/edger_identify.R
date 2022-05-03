@@ -10,7 +10,7 @@
 #' @importFrom rlang .data
 #' @param ref_ims A vector containing file paths of images in which the region(s) of interest will be defined.
 #' @param roi An argument for delineating the region(s) of interest outside of the main function. Default is NULL and will launch a user interface so the user can draw a region(s) of interest on the image. If "roi" is not NULL and ref_images = 1, input should be a 4-column data frame with a number of rows equal to regions. The data frame needs to contain coordinates to the region(s) of interest in the following order: top-left x, top-left y, bottom-right x, bottom-right y. If "roi" is not NULL and ref_images > 1, input should be a list of length ref_images, and each item of the list should be a separate 4-column data frame for the region(s) of interest in each image. Note that plotting of images by "imager" starts in the top-left corner.
-#' @param th A vector of numeric values between 0-1 for the lowest threshold value you want to recolor in each image(a low edge value captures weaker contrasts). Default is 0.1.
+#' @param th A vector of numeric values between 1-100 for the lowest threshold value you want to recolor in each image(a low edge value captures weaker contrasts). Default is 20.
 #' @param regions A numeric indicating how many regions to draw. Default is 1.
 #' @return The input data frame as an image.
 #' @export
@@ -18,7 +18,7 @@
 
 edger_identify <- function(ref_ims,
                         roi = NULL,
-                        th = .1,
+                        th = 20,
                         regions = 1
                         )
 
@@ -49,7 +49,7 @@ edger_identify <- function(ref_ims,
         roi2 <- dplyr::filter(im_bw,
                               im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
                                 im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4] &
-                                im_bw$value >= th[j])
+                                im_bw$value >= (th[j]/200))
 
         roi1 <- rbind(roi1, roi2)
 
@@ -67,7 +67,7 @@ edger_identify <- function(ref_ims,
         roi2 <- dplyr::filter(im_bw,
                               im_bw$x >= im_roi[1] & im_bw$x <= im_roi[3] &
                                 im_bw$y >= im_roi[2] & im_bw$y <= im_roi[4] &
-                                im_bw$value >= th[j])
+                                im_bw$value >= (th[j]/200))
 
         roi1 <- rbind(roi1, roi2)
 

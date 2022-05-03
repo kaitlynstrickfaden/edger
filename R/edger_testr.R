@@ -43,7 +43,7 @@ edger_testr <- function(imagepaths, regions = 1, color = "red") {
     for (i in 1:regions) {
 
       thdone <- FALSE
-      tv <- .1
+      tv <- 20
 
       shdone <- FALSE
       shf <- c(0,0)
@@ -81,7 +81,7 @@ edger_testr <- function(imagepaths, regions = 1, color = "red") {
 
           while (suppressWarnings(is.na(as.numeric(tvnew))) == TRUE |
                  suppressWarnings(as.numeric(tvnew)) <= 0) {
-            tvnew <- readline(prompt = str_glue("Not a valid input. Please input a non-zero number.  Current threshold value: {tv}  Input new threshold value: "))
+            tvnew <- readline(prompt = str_glue("Not a valid input. Please input a number between 1-100.  Current threshold value: {tv}  Input new threshold value: "))
 
           }
 

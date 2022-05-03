@@ -149,7 +149,7 @@ The package will allow you to either draw in a region of interest using the "gra
 
 ```{r rectangle grab}
 #im_c <- grabRect(im1, output = "coord") # draw a box around the object of interest
-im_c <- c(316,47,389,713)
+im_c <- c(316, 47, 389, 713)
 plot(im1, axes = F)
 rect(im_c[1], im_c[2], im_c[3], im_c[4], border = "cyan1")
 ```
@@ -178,14 +178,14 @@ roi <- filter(im1_bw,
 
 <br>
 
-This next code chunk will find the coordinates of the edges in the edge image and recolor them in the original image. You must specify some edge value as the minimum threshold to keep. By trial and error, I found that 0.1 was a good `th` for this image.
+This next code chunk will find the coordinates of the edges in the edge image and recolor them in the original image. You must specify some edge value as the minimum threshold to keep. By trial and error, I found that 20 was a good `th` for this image.
 
 <br>
 
 ```{r recolor image 1}
 ## Find edges in region of interest
 
-roi_cv <- roi[roi$value >= .1,]
+roi_cv <- roi[roi$value >= 20/200,]
 
 ## Find edge pixels in full image
 
@@ -235,7 +235,7 @@ roi <- filter(im2_bw,
               im2_bw$x >= im_c[1] & im2_bw$x <= im_c[3] &
               im2_bw$y >= im_c[2] & im2_bw$y <= im_c[4])
 
-roi_cv <- roi[roi$value >= .05,]
+roi_cv <- roi[roi$value >= 20/200,]
 
 ## Find edge pixels in full image
 

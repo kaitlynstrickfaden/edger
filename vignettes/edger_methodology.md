@@ -1,7 +1,7 @@
-edger\_methodology
+edger_methodology
 ================
 Kaitlyn Strickfaden
-2021-11-18
+2022-05-03
 
 <br>
 
@@ -177,7 +177,7 @@ functions. I define my region of interest…
 
 ``` r
 #im_c <- grabRect(im1, output = "coord") # draw a box around the object of interest
-im_c <- c(316,47,389,713)
+im_c <- c(316, 47, 389, 713)
 plot(im1, axes = F)
 rect(im_c[1], im_c[2], im_c[3], im_c[4], border = "cyan1")
 ```
@@ -214,14 +214,14 @@ regions so you can define several regions of interest if you need.
 This next code chunk will find the coordinates of the edges in the edge
 image and recolor them in the original image. You must specify some edge
 value as the minimum threshold to keep. By trial and error, I found that
-0.1 was a good `th` for this image.
+20 was a good `th` for this image.
 
 <br>
 
 ``` r
 ## Find edges in region of interest
 
-roi_cv <- roi[roi$value >= .1,]
+roi_cv <- roi[roi$value >= 20/200,]
 
 ## Find edge pixels in full image
 
