@@ -114,14 +114,15 @@ edger_multi <- function(images,
     message("Recoloring images...")
 
     with_progress({
-      p <- progressor(steps = length(images[-1]))
+      p <- progressor(steps = length(images))
 
-      purrr::map_chr(images[-1], ~{
+      purrr::map_chr(images, ~{
         p()
         edger_overlay(.,
                       m = m,
                       rgbcolor = rgbcolor,
                       show_image = show_image)
+        edger_meta(.)
       })
 
     })
@@ -136,30 +137,21 @@ edger_multi <- function(images,
     message("Recoloring images...")
 
     with_progress({
-      p <- progressor(steps = length(images[-1]))
+      p <- progressor(steps = length(images))
 
-      furrr::future_map_chr(images[-1], ~{
+      furrr::future_map_chr(images, ~{
         p()
         edger_overlay(.,
                       m = m,
                       rgbcolor = rgbcolor,
                       show_image = show_image)
+        edger_meta(.)
       })
 
     })
 
   }
 
-  message("Attributing metadata...")
-
-  with_progress({
-    p <- progressor(steps = length(images))
-
-    purrr::map_chr(images, ~{
-      p()
-      edger_meta(.)
-    })
-  })
 
   Sys.time() - st
 
