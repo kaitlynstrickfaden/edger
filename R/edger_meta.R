@@ -13,7 +13,7 @@
 edger_meta <- function(imagepath) {
 
   # Check if ExifTool is installed
-  if (invisible(system2("where", "exiftool")) == 1) {
+  if (invisible(system2("where", "exiftool", stdout = NULL, stderr = NULL)) == 1) {
     stop("Could not find installation of ExifTool.")
   }
 
@@ -21,7 +21,8 @@ edger_meta <- function(imagepath) {
   if (file.exists(imagepath) == FALSE) {
     stop(str_glue("{imagepath} is not a valid path.", sep = "")) }
 
-  invisible(system2("exiftool", str_glue("-exif:all= -tagsfromfile {imagepath} -all:all -overwrite_original {edger_name(imagepath)}")))
-  invisible(system2("exiftool", str_glue("-delete_original! {edger_name(imagepath)}")))
+  invisible(system2("exiftool", str_glue("-exif:all= -tagsfromfile {imagepath} -all:all -overwrite_original {edger_name(imagepath)}"), stdout = NULL, stderr = NULL))
+  invisible(system2("exiftool", str_glue("-delete_original! {edger_name(imagepath)}"),
+                    stdout = NULL, stderr = NULL))
 
 } # End of function
